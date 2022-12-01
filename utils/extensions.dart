@@ -2,11 +2,15 @@ import 'dart:math' as math;
 
 extension IterableExtension<T extends num> on Iterable<T> {
   T get max => reduce(math.max);
+  T get min => reduce(math.min);
 
-  List<T> topMax(int length) {
+  Iterable<T> topMax(int length) {
     final list = toList()..sort((a, b) => b.compareTo(a));
-    return list.sublist(0, length);
+    return list.take(length);
   }
 
-  T get min => reduce(math.min);
+  Iterable<T> topMin(int length) {
+    final list = toList()..sort();
+    return list.take(length);
+  }
 }
