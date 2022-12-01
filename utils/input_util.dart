@@ -34,7 +34,7 @@ class InputUtil {
   /// Returns input as one String.
   String get asString => _inputAsString;
 
-  /// Splits the input String by `newline`.
+  /// Reads the entire input contents as lines of text.
   List<String> getPerLine() => _inputAsList;
 
   /// Splits the input String by `whitespace` and `newline`.
