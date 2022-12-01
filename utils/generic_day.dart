@@ -14,11 +14,6 @@ abstract class GenericDay {
   int solvePart1();
   int solvePart2();
 
-  dynamic _parsedInput;
-  dynamic get parsedInput {
-    return _parsedInput ??= parseInput();
-  }
-
   void printSolutions() {
     print("-------------------------");
     print("         Day $day        ");

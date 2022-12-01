@@ -23,7 +23,7 @@ class Day01 extends GenericDay {
 
   @override
   int solvePart1() {
-    final results = parsedInput;
+    final results = parseInput();
 
     int maxCalories = -1;
     for (final elf in results) {
@@ -34,7 +34,7 @@ class Day01 extends GenericDay {
 
   @override
   int solvePart2() {
-    final results = parsedInput;
+    final results = parseInput();
     final topThreeMaxCalories = <int>[-1, -1, -1];
 
     for (final elf in results) {
