@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import '../utils/index.dart';
 
 class Day01 extends GenericDay {
@@ -18,31 +16,19 @@ class Day01 extends GenericDay {
         calories.add(int.parse(line));
       }
     }
+    elfs.sort((a, b) => b.compareTo(a));
     return elfs;
   }
 
   @override
   int solvePart1() {
     final results = parseInput();
-
-    int maxCalories = -1;
-    for (final elf in results) {
-      maxCalories = math.max(maxCalories, elf);
-    }
-    return maxCalories;
+    return results.first;
   }
 
   @override
   int solvePart2() {
     final results = parseInput();
-    final topThreeMaxCalories = <int>[-1, -1, -1];
-
-    for (final elf in results) {
-      topThreeMaxCalories.sort();
-      if (topThreeMaxCalories[0] < elf) {
-        topThreeMaxCalories[0] = elf;
-      }
-    }
-    return topThreeMaxCalories.reduce((value, e) => value + e);
+    return results.sublist(0, 3).reduce((value, e) => value + e);
   }
 }
