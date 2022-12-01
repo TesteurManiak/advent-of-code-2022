@@ -1,3 +1,4 @@
+import '../utils/extensions.dart';
 import '../utils/index.dart';
 
 class Day01 extends GenericDay {
@@ -8,9 +9,10 @@ class Day01 extends GenericDay {
     final elfs = <int>[];
     final calories = <int>[];
     final inputLines = input.getPerLine();
+
     for (final line in inputLines) {
       if (line.isEmpty) {
-        elfs.add(calories.reduce((a, b) => a + b));
+        elfs.add(calories.sum);
         calories.clear();
       } else {
         calories.add(int.parse(line));
@@ -29,6 +31,6 @@ class Day01 extends GenericDay {
   @override
   int solvePart2() {
     final results = parseInput();
-    return results.sublist(0, 3).reduce((value, e) => value + e);
+    return results.topMax(3).sum;
   }
 }
