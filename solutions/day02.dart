@@ -19,9 +19,8 @@ class Day02 extends GenericDay {
     final inputLines = parseInput();
     int total = 0;
     for (final line in inputLines) {
-      final opponent =
-          RPSValues.values.firstWhere((e) => e.opponentPlay == line[0]);
-      final you = RPSValues.values.firstWhere((e) => e.yourPlay == line[1]);
+      final opponent = RPSValues.fromLetter(line[0]);
+      final you = RPSValues.fromLetter(line[1]);
 
       if (you.isWin(opponent)) {
         total += ResultValues.win.score;
@@ -39,9 +38,8 @@ class Day02 extends GenericDay {
     final inputLines = parseInput();
     int total = 0;
     for (final line in inputLines) {
-      final opponent =
-          RPSValues.values.firstWhere((e) => e.opponentPlay == line[0]);
-      final result = ResultValues.values.firstWhere((e) => e.letter == line[1]);
+      final opponent = RPSValues.fromLetter(line[0]);
+      final result = ResultValues.fromLetter(line[1]);
 
       switch (result) {
         case ResultValues.win:
@@ -77,6 +75,22 @@ enum RPSValues {
     this.counter,
     this.score,
   );
+
+  static RPSValues fromLetter(String letter) {
+    switch (letter) {
+      case 'A':
+      case 'X':
+        return RPSValues.rock;
+      case 'B':
+      case 'Y':
+        return RPSValues.paper;
+      case 'C':
+      case 'Z':
+        return RPSValues.scissors;
+      default:
+        throw Exception('Invalid letter');
+    }
+  }
 }
 
 extension on RPSValues {
@@ -106,4 +120,17 @@ enum ResultValues {
   final String letter;
   final int score;
   const ResultValues(this.letter, this.score);
+
+  static ResultValues fromLetter(String letter) {
+    switch (letter) {
+      case 'Z':
+        return ResultValues.win;
+      case 'Y':
+        return ResultValues.draw;
+      case 'X':
+        return ResultValues.loss;
+      default:
+        throw Exception('Invalid letter');
+    }
+  }
 }
