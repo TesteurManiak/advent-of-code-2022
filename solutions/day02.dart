@@ -24,9 +24,9 @@ class Day02 extends GenericDay {
       final you = RPSValues.values.firstWhere((e) => e.yourPlay == line[1]);
 
       if (you.isWin(opponent)) {
-        total += scoreForAWin;
+        total += ResultValues.win.score;
       } else if (you.isDraw(opponent)) {
-        total += scoreForADraw;
+        total += ResultValues.draw.score;
       }
 
       total += you.score;
@@ -45,11 +45,11 @@ class Day02 extends GenericDay {
 
       switch (result) {
         case ResultValues.win:
-          total += scoreForAWin;
+          total += ResultValues.win.score;
           total += counterFor(opponent).score;
           break;
         case ResultValues.draw:
-          total += scoreForADraw;
+          total += ResultValues.draw.score;
           total += opponent.score;
           break;
         case ResultValues.loss:
@@ -60,9 +60,6 @@ class Day02 extends GenericDay {
     return total;
   }
 }
-
-const scoreForAWin = 6;
-const scoreForADraw = 3;
 
 enum RPSValues {
   rock('A', 'X', 'Y', 1),
@@ -102,10 +99,11 @@ RPSValues lossFor(RPSValues value) {
 }
 
 enum ResultValues {
-  win('Z'),
-  draw('Y'),
-  loss('X');
+  win('Z', 6),
+  draw('Y', 3),
+  loss('X', 0);
 
   final String letter;
-  const ResultValues(this.letter);
+  final int score;
+  const ResultValues(this.letter, this.score);
 }
