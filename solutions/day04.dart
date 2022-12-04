@@ -58,20 +58,12 @@ class Pair {
         );
 
   bool isFullyOverlapping(Pair other) {
-    if (start <= other.start && end >= other.end) {
-      return true;
-    } else if (other.start <= start && other.end >= end) {
-      return true;
-    }
-    return false;
+    return start <= other.start && end >= other.end ||
+        other.start <= start && other.end >= end;
   }
 
   bool isPartiallyOverlapping(Pair other) {
-    if (start <= other.start && end >= other.start) {
-      return true;
-    } else if (other.start <= start && other.end >= start) {
-      return true;
-    }
-    return false;
+    return start <= other.start && end >= other.start ||
+        other.start <= start && other.end >= start;
   }
 }
