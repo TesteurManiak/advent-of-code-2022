@@ -19,7 +19,7 @@ class Day05 extends GenericDay {
       int column = 0;
       for (int x = 0; x < line.length; x += width) {
         final subStr = line.substring(x);
-        final str = String.fromCharCodes(subStr.codeUnits.take(width));
+        final str = subStr.take(width);
 
         stacks.putIfAbsent(column, () => []);
 

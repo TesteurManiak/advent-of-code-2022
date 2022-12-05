@@ -16,3 +16,9 @@ extension IterableExtensions<T> on Iterable<T> {
     return list.skip(list.length - count);
   }
 }
+
+extension StringExtensions on String {
+  String take(int count) {
+    return String.fromCharCodes(codeUnits.take(count));
+  }
+}
