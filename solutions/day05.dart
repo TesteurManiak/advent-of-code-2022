@@ -125,7 +125,7 @@ class Movement {
 
   factory Movement.fromString(String input) {
     final parts = input.split(' ')
-      ..removeWhere((element) => !RegExp(r'\d').hasMatch(element));
+      ..removeWhere((e) => !RegExp(r'\d').hasMatch(e));
 
     final numberOfSteps = int.parse(parts[0]);
     final start = int.parse(parts[1]) - 1;
