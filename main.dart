@@ -1,3 +1,5 @@
+import 'package:collection/collection.dart';
+
 import 'solutions/index.dart';
 import 'utils/generic_day.dart';
 
@@ -11,20 +13,19 @@ final days = <GenericDay>[
 ];
 
 void main(List<String?> args) {
-  bool onlyShowLast = true;
-
   if (args.length == 1 && args[0].isHelperArgument()) {
     printHelper();
     return;
+  } else if (args.length == 1 && args[0].isAllArgument()) {
+    days.forEach((day) => day.printSolutions());
+    return;
+  } else if (args.length == 2 && args[0].isDayArgument()) {
+    final day = int.parse(args[1]!);
+    printSolutionForDay(day);
+    return;
   }
 
-  if (args.length == 1 && args[0].isAllArgument()) {
-    onlyShowLast = false;
-  }
-
-  onlyShowLast
-      ? days.last.printSolutions()
-      : days.forEach((day) => day.printSolutions());
+  days.last.printSolutions();
 }
 
 void printHelper() {
@@ -33,10 +34,20 @@ void printHelper() {
 Usage: dart main.dart <command>
 
 Global Options:
-  -h, --help    Show this help message
-  -a, --all     Show all solutions
+  -h, --help             Show this help message
+  -a, --all              Show all solutions
+  -d <day>, --day <day>  Show solutions for a specific day
 ''',
   );
+}
+
+void printSolutionForDay(int day) {
+  final daySolution = days.firstWhereOrNull((e) => e.day == day);
+  if (daySolution == null) {
+    print('No solution found for day $day');
+  } else {
+    daySolution.printSolutions();
+  }
 }
 
 extension ArgsMatcher on String? {
@@ -46,5 +57,9 @@ extension ArgsMatcher on String? {
 
   bool isAllArgument() {
     return this == '-a' || this == '--all';
+  }
+
+  bool isDayArgument() {
+    return this == '-d' || this == '--day';
   }
 }
