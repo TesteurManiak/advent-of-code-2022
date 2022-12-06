@@ -11,6 +11,9 @@ class Day06 extends GenericDay {
     for (int i = 0; i < line.length; i++) {
       final buffer = <String>{};
       for (int j = 0; j < length; j++) {
+        final char = line[i + j];
+
+        if (buffer.contains(char)) break;
         buffer.add(line[i + j]);
       }
       if (buffer.length == length) return i + length;
