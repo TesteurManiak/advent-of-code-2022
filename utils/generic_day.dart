@@ -17,8 +17,8 @@ abstract class GenericDay {
   void printSolutions() {
     print("-------------------------");
     print("         Day $day        ");
-    print("Solution for puzzle one: ${solvePart1()}");
-    print("Solution for puzzle two: ${solvePart2()}");
+    print("Solution for puzzle one: ${solvePart1().toString()}");
+    print("Solution for puzzle two: ${solvePart2().toString()}");
     print("\n");
   }
 }

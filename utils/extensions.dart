@@ -64,13 +64,19 @@ extension StringExtensions on String {
     return String.fromCharCodes(codeUnits.skip(count));
   }
 
+  /// Returns a [List] if the characters in this string.
+  ///
+  /// Example:
+  /// ```dart
+  /// 'abc'.getPerLine(); // ['a', 'b', 'c']
+  /// ```
+  List<String> toList() => split('');
+
   /// Returns a [Set] of the characters in this string.
   ///
   /// Example:
   /// ```dart
   /// 'hello'.toSet(); // {'h', 'e', 'l', 'o'}
   /// ```
-  Set<String> toSet() {
-    return Set.from(split(''));
-  }
+  Set<String> toSet() => Set.from(split(''));
 }
