@@ -11,9 +11,19 @@ extension NumIterableExtension<T extends num> on Iterable<T> {
 }
 
 extension IterableExtensions<T> on Iterable<T> {
+  /// Returns a new [Iterable] of the [count] last elements of this iterable.
+  ///
+  /// The returned [Iterable] may contain less than [count] elements if this
+  /// iterable contains fewer than [count] elements.
+  ///
+  /// The [count] must not be negative.
   Iterable<T> takeLast(int count) {
+    assert(count >= 0);
     final list = toList();
-    return list.skip(list.length - count);
+    final realCount = list.length - count;
+
+    if (realCount < 0) [];
+    return list.skip(realCount);
   }
 }
 
