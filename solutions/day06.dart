@@ -1,3 +1,4 @@
+import '../utils/extensions.dart';
 import '../utils/index.dart';
 
 class Day06 extends GenericDay {
@@ -9,13 +10,7 @@ class Day06 extends GenericDay {
     final line = inputData[0];
 
     for (int i = 0; i < line.length; i++) {
-      final buffer = <String>{};
-      for (int j = 0; j < length; j++) {
-        final char = line[i + j];
-
-        if (buffer.contains(char)) break;
-        buffer.add(line[i + j]);
-      }
+      final buffer = line.substring(i).take(length).toSet();
       if (buffer.length == length) return i + length;
     }
     return 0;

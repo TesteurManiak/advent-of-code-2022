@@ -21,4 +21,8 @@ extension StringExtensions on String {
   String take(int count) {
     return String.fromCharCodes(codeUnits.take(count));
   }
+
+  Set<String> toSet() {
+    return Set.from(split(''));
+  }
 }
