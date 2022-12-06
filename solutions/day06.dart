@@ -10,7 +10,7 @@ class Day06 extends GenericDay {
     final line = inputData[0];
 
     for (int i = 0; i < line.length; i++) {
-      final buffer = line.substring(i).take(length).toSet();
+      final buffer = line.skip(i).take(length).toSet();
       if (buffer.length == length) return i + length;
     }
     return 0;

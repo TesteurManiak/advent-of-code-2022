@@ -22,6 +22,10 @@ extension StringExtensions on String {
     return String.fromCharCodes(codeUnits.take(count));
   }
 
+  String skip(int count) {
+    return String.fromCharCodes(codeUnits.skip(count));
+  }
+
   Set<String> toSet() {
     return Set.from(split(''));
   }
