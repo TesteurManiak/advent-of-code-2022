@@ -18,17 +18,23 @@ extension IterableExtensions<T> on Iterable<T> {
 }
 
 extension StringExtensions on String {
-  /// Returns a lazy iterable of the [count] first elements of this string.
+  /// Returns a [String] of the [count] first elements of this string.
   ///
-  /// The returned `String` may contain fewer than `count` elements, if `this`
-  /// contains fewer than `count` elements.
+  /// The returned [String] may contain fewer than [count] elements, if `this`
+  /// contains fewer than [count] elements.
   ///
-  /// The `count` must not be negative.
+  /// The [count] must not be negative.
   String take(int count) {
     assert(count >= 0);
     return String.fromCharCodes(codeUnits.take(count));
   }
 
+  /// Returns a [String] that provides all but the first [count] elements.
+  ///
+  /// If `this` contains fewer than [count] elements, then an empty string is
+  /// returned.
+  ///
+  /// The [count] must not be negative.
   String skip(int count) {
     assert(count >= 0);
     return String.fromCharCodes(codeUnits.skip(count));
