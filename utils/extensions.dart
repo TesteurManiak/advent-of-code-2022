@@ -1,12 +1,26 @@
 extension NumIterableExtension<T extends num> on Iterable<T> {
-  Iterable<T> topMax(int length) {
+  /// Returns an [Iterable] of the top [count] elements with the highest value.
+  ///
+  /// The returned [Iterable] may contain fewer than [count] elements if this
+  /// [Iterable] contains fewer than [count] elements.
+  ///
+  /// The [count] must not be negative.
+  Iterable<T> topMax(int count) {
+    assert(count >= 0);
     final list = toList()..sort((a, b) => b.compareTo(a));
-    return list.take(length);
+    return list.take(count);
   }
 
-  Iterable<T> topMin(int length) {
+  /// Returns an [Iterable] of the top [count] elements with the lowest value.
+  ///
+  /// The returned [Iterable] may contain fewer than [count] elements if this
+  /// [Iterable] contains fewer than [count] elements.
+  ///
+  /// The [count] must not be negative.
+  Iterable<T> topMin(int count) {
+    assert(count >= 0);
     final list = toList()..sort();
-    return list.take(length);
+    return list.take(count);
   }
 }
 
@@ -22,7 +36,7 @@ extension IterableExtensions<T> on Iterable<T> {
     final list = toList();
     final realCount = list.length - count;
 
-    if (realCount < 0) [];
+    if (realCount < 0) return [];
     return list.skip(realCount);
   }
 }
@@ -50,6 +64,12 @@ extension StringExtensions on String {
     return String.fromCharCodes(codeUnits.skip(count));
   }
 
+  /// Returns a [Set] of the characters in this string.
+  ///
+  /// Example:
+  /// ```dart
+  /// 'hello'.toSet(); // {'h', 'e', 'l', 'o'}
+  /// ```
   Set<String> toSet() {
     return Set.from(split(''));
   }
