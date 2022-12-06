@@ -20,13 +20,11 @@ class Day06 extends GenericDay {
 
   @override
   int solvePart1() {
-    final inputData = parseInput();
-    return inputData;
+    return parseInput();
   }
 
   @override
   int solvePart2() {
-    final inputData = parseInput(14);
-    return inputData;
+    return parseInput(14);
   }
 }
