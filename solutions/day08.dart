@@ -18,8 +18,8 @@ class Day08 extends GenericDay {
   }
 
   @override
-  solvePart1([TreeGrid? treeGrid]) {
-    final grid = treeGrid ?? parseInput();
+  int solvePart1() {
+    final grid = parseInput();
 
     int visibleTrees = grid.numberOfOutsideTrees;
     for (int y = 1; y < grid.height - 1; y++) {
@@ -46,8 +46,8 @@ class Day08 extends GenericDay {
   }
 
   @override
-  solvePart2([TreeGrid? treeGrid]) {
-    final grid = treeGrid ?? parseInput();
+  int solvePart2() {
+    final grid = parseInput();
 
     int maxScenicScore = 0;
     for (int y = 1; y < grid.height; y++) {
