@@ -173,15 +173,6 @@ class Position extends Equatable {
   final int x;
   final int y;
 
-  Iterable<Position> get adjacent {
-    return <Position>{
-      Position(x, y - 1),
-      Position(x, y + 1),
-      Position(x - 1, y),
-      Position(x + 1, y),
-    };
-  }
-
   Position copyWith({int? x, int? y}) {
     return Position(x ?? this.x, y ?? this.y);
   }
