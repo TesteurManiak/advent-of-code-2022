@@ -1,8 +1,8 @@
-import 'dart:math' as math;
-
 import 'package:equatable/equatable.dart';
 
 import '../utils/index.dart';
+
+typedef MovementCallback = Position Function(Position knot);
 
 class Day09 extends GenericDay {
   Day09() : super(9);
@@ -26,8 +26,8 @@ class Day09 extends GenericDay {
   }
 
   @override
-  solvePart2() {
-    final commands = parseInput();
+  solvePart2([List<CommandLine>? overrideCommands]) {
+    final commands = overrideCommands ?? parseInput();
     final grid = MyGrid(10);
 
     for (final command in commands) {
@@ -64,83 +64,106 @@ class CommandLine {
 
   final int steps;
   final Direction direction;
+
+  @override
+  String toString() => '$steps on the ${direction.name}';
 }
 
 class MyGrid {
   MyGrid(int knots) : knotPositions = List.filled(knots, Position(0, 0));
 
-  List<Position> knotPositions = <Position>[];
-  Position get headPosition => knotPositions.first;
-  set headPosition(Position value) => knotPositions[0] = value;
-
   final tailPositions = <Position>{
     Position(0, 0),
   };
 
+  List<Position> knotPositions = <Position>[];
+
+  set headPosition(Position value) => knotPositions[0] = value;
+  Position get tailPosition => tailPositions.last;
+
   void moveHead(CommandLine command) {
     for (int i = 0; i < command.steps; i++) {
+      final MovementCallback move;
       switch (command.direction) {
         case Direction.left:
-          moveHeadLeft();
+          move = moveLeft;
           break;
         case Direction.right:
-          moveHeadRight();
+          move = moveRight;
           break;
         case Direction.up:
-          moveHeadUp();
+          move = moveUp;
           break;
         case Direction.down:
-          moveHeadDown();
+          move = moveDown;
           break;
       }
+      knotPositions[0] = move(knotPositions.first);
 
       for (int i = 1; i < knotPositions.length; i++) {
-        final headKnot = knotPositions[i - 1];
-        knotPositions[i] = moveKnot(headKnot, knotPositions[i]);
+        final head = knotPositions[i - 1];
+        final tail = knotPositions[i];
+        if (!head.isNextTo(tail)) knotPositions[i] = moveKnot(head, tail);
       }
       tailPositions.add(knotPositions.last);
     }
   }
 
-  void moveHeadLeft() {
-    headPosition = headPosition.copyWith(x: headPosition.x - 1);
+  Position moveLeft(Position knot) {
+    return knot.copyWith(x: knot.x - 1);
   }
 
-  void moveHeadRight() {
-    headPosition = headPosition.copyWith(x: headPosition.x + 1);
+  Position moveRight(Position knot) {
+    return knot.copyWith(x: knot.x + 1);
   }
 
-  void moveHeadUp() {
-    headPosition = headPosition.copyWith(y: headPosition.y + 1);
+  Position moveUp(Position knot) {
+    return knot.copyWith(y: knot.y + 1);
   }
 
-  void moveHeadDown() {
-    headPosition = headPosition.copyWith(y: headPosition.y - 1);
+  Position moveDown(Position knot) {
+    return knot.copyWith(y: knot.y - 1);
   }
 
-  Position moveKnot(Position headKnot, Position knotTail) {
-    final shouldMove = distanceBetween(headKnot, knotTail) >= 2;
-    if (shouldMove) {
-      return shortestDirectionTo(headKnot, knotTail);
+  Position moveUpRight(Position knot) {
+    return knot.copyWith(x: knot.x + 1, y: knot.y + 1);
+  }
+
+  Position moveUpLeft(Position knot) {
+    return knot.copyWith(x: knot.x - 1, y: knot.y + 1);
+  }
+
+  Position moveDownRight(Position knot) {
+    return knot.copyWith(x: knot.x + 1, y: knot.y - 1);
+  }
+
+  Position moveDownLeft(Position knot) {
+    return knot.copyWith(x: knot.x - 1, y: knot.y - 1);
+  }
+
+  Position moveKnot(Position head, Position tail) {
+    if (head.x == tail.x) {
+      if (head.y > tail.y) return moveUp(tail);
+      return moveDown(tail);
+    } else if (head.y == tail.y) {
+      if (head.x > tail.x) return moveRight(tail);
+      return moveLeft(tail);
+    } else {
+      if ((head.x - tail.x).abs() != 1) {
+        if (head.y > tail.y) {
+          if (head.x > tail.x) return moveUpRight(tail);
+          return moveUpLeft(tail);
+        }
+        if (head.x > tail.x) return moveDownRight(tail);
+        return moveDownLeft(tail);
+      }
+      if (head.x > tail.x) {
+        if (head.y > tail.y) return moveUpRight(tail);
+        return moveDownRight(tail);
+      }
+      if (head.y > tail.y) return moveUpLeft(tail);
+      return moveDownLeft(tail);
     }
-    return knotTail;
-  }
-
-  Position shortestDirectionTo(Position headKnot, Position tailKnot) {
-    final adjacent = tailKnot.adjacent;
-    final adjacentToHead = adjacent.where((pos) => pos.isAdjacentTo(headKnot));
-    if (adjacentToHead.isNotEmpty) {
-      return adjacentToHead.first;
-    }
-
-    final neighbours = tailKnot.neighbours;
-    final neighboursToHead =
-        neighbours.where((pos) => pos.isAdjacentTo(headKnot));
-    if (neighboursToHead.isNotEmpty) {
-      return neighboursToHead.first;
-    }
-
-    return tailKnot;
   }
 }
 
@@ -159,44 +182,17 @@ class Position extends Equatable {
     };
   }
 
-  bool isAdjacentTo(Position other) {
-    return adjacent.contains(other);
-  }
-
-  Iterable<Position> get neighbours {
-    return <Position>{
-      Position(x, y - 1),
-      Position(x + 1, y - 1),
-      Position(x + 1, y),
-      Position(x + 1, y + 1),
-      Position(x, y + 1),
-      Position(x - 1, y + 1),
-      Position(x - 1, y),
-      Position(x - 1, y - 1),
-    };
-  }
-
-  bool isNeighbourOf(Position other) {
-    return neighbours.contains(other);
-  }
-
   Position copyWith({int? x, int? y}) {
     return Position(x ?? this.x, y ?? this.y);
   }
 
-  int distanceTo(Position other) {
-    final xDiff = (x - other.x).abs();
-    final yDiff = (y - other.y).abs();
-    return xDiff + yDiff;
+  bool isNextTo(Position other) {
+    return (x - other.x).abs() <= 1 && (y - other.y).abs() <= 1;
   }
 
   @override
   List<Object?> get props => [x, y];
-}
 
-/// Returns the distance between [head] and [tail].
-int distanceBetween(Position head, Position tail) {
-  final xDiff = (head.x - tail.x).abs();
-  final yDiff = (head.y - tail.y).abs();
-  return math.max(xDiff, yDiff);
+  @override
+  String toString() => '($x, $y)';
 }
