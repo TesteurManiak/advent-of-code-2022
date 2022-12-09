@@ -21,7 +21,6 @@ class Day09 extends GenericDay {
     for (final command in commands) {
       grid.moveHead(command);
     }
-
     return grid.tailPositions.length;
   }
 
@@ -33,7 +32,6 @@ class Day09 extends GenericDay {
     for (final command in commands) {
       grid.moveHead(command);
     }
-
     return grid.tailPositions.length;
   }
 }
@@ -53,20 +51,12 @@ enum Direction {
 }
 
 class CommandLine {
-  const CommandLine({
-    required this.steps,
-    required this.direction,
-  });
-
   CommandLine.fromString(String input)
       : steps = int.parse(input.split(' ')[1]),
         direction = Direction.fromKey(input.split(' ')[0]);
 
   final int steps;
   final Direction direction;
-
-  @override
-  String toString() => '$steps on the ${direction.name}';
 }
 
 class MyGrid {
@@ -177,7 +167,4 @@ class Position extends Equatable {
 
   @override
   List<Object?> get props => [x, y];
-
-  @override
-  String toString() => '($x, $y)';
 }
