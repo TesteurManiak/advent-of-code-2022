@@ -72,11 +72,8 @@ class CommandLine {
 class MyGrid {
   MyGrid(int knots) : knotPositions = List.filled(knots, Position(0, 0));
 
-  final tailPositions = <Position>{
-    Position(0, 0),
-  };
-
-  List<Position> knotPositions = <Position>[];
+  final List<Position> knotPositions;
+  final tailPositions = <Position>{Position(0, 0)};
 
   set headPosition(Position value) => knotPositions[0] = value;
   Position get tailPosition => tailPositions.last;
