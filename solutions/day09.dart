@@ -75,9 +75,6 @@ class MyGrid {
   final List<Position> knotPositions;
   final tailPositions = <Position>{Position(0, 0)};
 
-  set headPosition(Position value) => knotPositions[0] = value;
-  Position get tailPosition => tailPositions.last;
-
   void moveHead(CommandLine command) {
     for (int i = 0; i < command.steps; i++) {
       final MovementCallback move;
