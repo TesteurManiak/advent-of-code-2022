@@ -19,7 +19,8 @@ void main() {
           'L 5',
           'R 2',
         ];
-        final result = day.solvePart1(parseInput(inputLines));
+        day.input.inputAsList = inputLines;
+        final result = day.solvePart1();
         expect(result, 13);
       },
     );
@@ -35,7 +36,8 @@ void main() {
         'L 25',
         'U 20',
       ];
-      final result = day.solvePart2(parseInput(inputLines));
+      day.input.inputAsList = inputLines;
+      final result = day.solvePart2();
       expect(result, 36);
     });
   });
