@@ -1,5 +1,5 @@
-import '../utils/index.dart';
 import '../utils/extensions.dart';
+import '../utils/index.dart';
 
 class Day05 extends GenericDay {
   Day05() : super(5);
@@ -110,7 +110,9 @@ Map<int, List<String>> moveStackesAllTogether(
 
   final elems = startStack.takeLast(move.numberOfSteps).toList();
   startStack.removeRange(
-      startStack.length - move.numberOfSteps, startStack.length);
+    startStack.length - move.numberOfSteps,
+    startStack.length,
+  );
   endStack.addAll(elems);
 
   return newStacks;

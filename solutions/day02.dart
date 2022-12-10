@@ -109,7 +109,8 @@ RPSValues counterFor(RPSValues value) {
 
 RPSValues lossFor(RPSValues value) {
   return RPSValues.values.firstWhere(
-      (e) => e.yourPlay != value.counter && e.yourPlay != value.yourPlay);
+    (e) => e.yourPlay != value.counter && e.yourPlay != value.yourPlay,
+  );
 }
 
 enum ResultValues {

@@ -29,7 +29,7 @@ class Day10 extends GenericDay {
   }
 
   @override
-  solvePart2() {
+  String solvePart2() {
     final instructions = parseInput();
     final lines = <String>[];
 

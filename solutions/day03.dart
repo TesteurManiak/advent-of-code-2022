@@ -16,8 +16,7 @@ class Day03 extends GenericDay {
       final part1 = line.substring(0, line.length ~/ 2);
       final part2 = line.substring(line.length ~/ 2);
 
-      final commonCharacters =
-          part1.findCommonCharacters((e) => part2.contains(e));
+      final commonCharacters = part1.findCommonCharacters(part2.contains);
       sumOfPriorities += commonCharacters.sumOfPriorities();
     }
 
@@ -50,7 +49,7 @@ extension on String {
 
 extension on Iterable<String> {
   int sumOfPriorities() {
-    return map((e) => characterValue(e)).reduce((value, e) => value + e);
+    return map(characterValue).reduce((value, e) => value + e);
   }
 }
 

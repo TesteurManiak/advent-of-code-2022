@@ -16,7 +16,7 @@ class Day07 extends GenericDay {
       final command = group.first;
 
       if (command.startsWith('cd')) {
-        String path = command.substring(3);
+        final path = command.substring(3);
         FileEntry? parentDir = currentDir.parent;
 
         if (path.startsWith('..') && parentDir != null) {
@@ -49,7 +49,7 @@ class Day07 extends GenericDay {
   }
 
   @override
-  solvePart1() {
+  int solvePart1() {
     final files = parseInput()
         .getAllFiles()
         .where((e) => e.type == FileType.dir && e.totalSize <= 100000);
@@ -57,7 +57,7 @@ class Day07 extends GenericDay {
   }
 
   @override
-  solvePart2() {
+  int solvePart2() {
     final files = parseInput();
     final freeSpace = 70000000 - files.totalSize;
     final neededSpace = 30000000 - freeSpace;

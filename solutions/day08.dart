@@ -11,7 +11,7 @@ class Day08 extends GenericDay {
     final gridMap = <int, List<int>>{};
     for (int i = 0; i < lineInputs.length; i++) {
       final line = lineInputs[i];
-      final lineParts = line.split('').map((e) => int.parse(e)).toList();
+      final lineParts = line.split('').map(int.parse).toList();
       gridMap[i] = lineParts;
     }
     return TreeGrid(gridMap);
@@ -29,10 +29,14 @@ class Day08 extends GenericDay {
             visibleFrom(currentTree, grid.grid[y]!.sublist(0, x));
         final isVisibleFromRight =
             visibleFrom(currentTree, grid.grid[y]!.sublist(x + 1));
-        final isVisibleFromTop = visibleFrom(currentTree,
-            grid.grid.values.map((e) => e[x]).toList().sublist(0, y));
-        final isVisibleFromBottom = visibleFrom(currentTree,
-            grid.grid.values.map((e) => e[x]).toList().sublist(y + 1));
+        final isVisibleFromTop = visibleFrom(
+          currentTree,
+          grid.grid.values.map((e) => e[x]).toList().sublist(0, y),
+        );
+        final isVisibleFromBottom = visibleFrom(
+          currentTree,
+          grid.grid.values.map((e) => e[x]).toList().sublist(y + 1),
+        );
 
         if (isVisibleFromLeft ||
             isVisibleFromRight ||
@@ -74,7 +78,7 @@ class Day08 extends GenericDay {
 
     for (int i = y - 1; i >= 0; i--) {
       final tree = grid[i]![x];
-      if (tree >= currentTree) return (score + 1);
+      if (tree >= currentTree) return score + 1;
       score++;
     }
     return score;
@@ -86,7 +90,7 @@ class Day08 extends GenericDay {
     int score = 0;
     for (int i = y + 1; i < grid.length; i++) {
       final tree = grid[i]![x];
-      if (tree >= currentTree) return (score + 1);
+      if (tree >= currentTree) return score + 1;
       score++;
     }
     return score;
@@ -98,7 +102,7 @@ class Day08 extends GenericDay {
     int score = 0;
     for (int i = x - 1; i >= 0; i--) {
       final tree = grid[y]![i];
-      if (tree >= currentTree) return (score + 1);
+      if (tree >= currentTree) return score + 1;
       score++;
     }
     return score;
@@ -110,7 +114,7 @@ class Day08 extends GenericDay {
     int score = 0;
     for (int i = x + 1; i < grid[0]!.length; i++) {
       final tree = grid[y]![i];
-      if (tree >= currentTree) return (score + 1);
+      if (tree >= currentTree) return score + 1;
       score++;
     }
     return score;
