@@ -65,6 +65,32 @@ class Day$dayNumber extends GenericDay {
     ),
   );
 
+  // Create test file
+  unawaited(
+    File('test/day${dayNumber}_test.dart').writeAsString(
+      '''
+import 'package:test/test.dart';
+
+import '../solutions/index.dart';
+
+void main() {
+  group('Day$dayNumber', () {
+    final day = Day$dayNumber();
+
+    group('solvePart1', () {
+
+    });
+
+    group('solvePart2', () {
+      
+    });
+  });
+}
+
+''',
+    ),
+  );
+
   // export new day in index file
   File('solutions/index.dart').writeAsString(
     'export \'day$dayNumber.dart\';\n',
