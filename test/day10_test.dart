@@ -15,11 +15,15 @@ void main() {
       });
     });
 
-    group('part2', () {
-      test('solvePart2', () {
-        final result = day.solvePart2();
-        print(result);
-      });
-    });
+    group(
+      'part2',
+      () {
+        test('solvePart2', () {
+          final result = day.solvePart2();
+          print(result);
+        });
+      },
+      skip: true, // To avoid printing the output to the console
+    );
   });
 }
