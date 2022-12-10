@@ -81,7 +81,7 @@ class Day$dayNumber extends GenericDay {
     final dataPath = 'input/aoc$dayNumber.txt';
     // unawaited(File(dataPath).create());
     response.pipe(File(dataPath).openWrite());
-  } on Error catch (e) {
+  } catch (e) {
     print('Error loading file: $e');
   }
 
