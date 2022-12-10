@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
 
-import '../solutions/day09.dart';
+import '../solutions/index.dart';
 import 'utils/read_input.dart';
 
 void main() {

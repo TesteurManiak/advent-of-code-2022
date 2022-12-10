@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
 
-import '../solutions/day10.dart';
+import '../solutions/index.dart';
 import 'utils/test_utils.dart';
 
 void main() {
