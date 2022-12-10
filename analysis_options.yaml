@@ -2,7 +2,6 @@ analyzer:
   exclude:
     - lib/**.g.dart
     - test/**.mocks.dart
-    - lib/generated_plugin_registrant.dart
   strong-mode:
     implicit-casts: false
   errors:
@@ -56,3 +55,24 @@ linter:
     - always_require_non_null_named_parameters
     - annotate_overrides
     - avoid_function_literals_in_foreach_calls
+    - avoid_init_to_null
+    - avoid_null_checks_in_equality_operators
+    - avoid_renaming_method_parameters
+    - avoid_return_types_on_setters
+    - avoid_returning_null_for_void
+    - avoid_single_cascade_in_expression_statements
+    - empty_constructor_bodies
+    - implementation_imports
+    - no_leading_underscores_for_local_identifiers
+    - null_closures
+    - overridden_fields
+    - prefer_adjacent_string_concatenation
+    - prefer_collection_literals
+    - prefer_conditional_assignment
+    - prefer_const_constructors_in_immutables
+    - prefer_const_declarations
+    - prefer_const_literals_to_create_immutables
+    - prefer_contains
+    - prefer_final_fields
+    - prefer_for_elements_to_map_fromIterable
+    - prefer_function_declarations_over_variables
