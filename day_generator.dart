@@ -6,7 +6,7 @@ import 'dart:io';
 void main(List<String?> args) async {
   String year = '2022';
   String session =
-      '53616c7465645f5f7d2c0c2a42072e076119abc89fbad540795e7e0b028cf3eee60ee5b14c54e2c6c00b6e0f632cc499af6ea985f1e574db79920e6f71393c61';
+      '53616c7465645f5fbaa4b5351d60110dd4c7a466cfd7b671d03b77d110ef2c634f5b2188afbf39a852d3c7d6944bb2edd4b9f556b13760f7129045fdd68e637c';
 
   if (args.length > 1) {
     print('Please call with: <dayNumber>');
@@ -36,59 +36,15 @@ void main(List<String?> args) async {
   // Create lib file
   final dayFileName = 'day$dayNumber.dart';
   unawaited(
-    File('solutions/$dayFileName').writeAsString(
-      '''
-import '../utils/index.dart';
-
-class Day$dayNumber extends GenericDay {
-  Day$dayNumber() : super(${int.parse(dayNumber)});
-
-  @override
-  parseInput() {
-    
-  }
-
-  @override
-  solvePart1() {
-    
-    return 0;
-  }
-
-  @override
-  solvePart2() {
-
-    return 0;
-  }
-}
-
-''',
+    File('solutions/$dayFileName').writeDayFile(
+      dayString: dayNumber,
+      dayInt: int.parse(dayNumber),
     ),
   );
 
   // Create test file
   unawaited(
-    File('test/day${dayNumber}_test.dart').writeAsString(
-      '''
-import 'package:test/test.dart';
-
-import '../solutions/index.dart';
-
-void main() {
-  group('Day$dayNumber', () {
-    final day = Day$dayNumber();
-
-    group('solvePart1', () {
-
-    });
-
-    group('solvePart2', () {
-      
-    });
-  });
-}
-
-''',
-    ),
+    File('test/day${dayNumber}_test.dart').writeTestFile(dayNumber),
   );
 
   // export new day in index file
@@ -112,4 +68,28 @@ void main() {
   }
 
   print('All set, Good luck!');
+}
+
+extension WriteTemplateExtension on File {
+  Future<void> writeDayFile({
+    required String dayString,
+    required int dayInt,
+  }) async {
+    String template = await readTemplateFileAsString('day.dart');
+    template = template.replaceAll(RegExp(r'{{dayString}}'), dayString);
+    template = template.replaceAll(RegExp(r'{{dayInt}}'), dayInt.toString());
+
+    await writeAsString(template);
+  }
+
+  Future<void> writeTestFile(String dayString) async {
+    String template = await readTemplateFileAsString('day_test.dart');
+    template = template.replaceAll(RegExp(r'{{dayString}}'), dayString);
+
+    await writeAsString(template);
+  }
+}
+
+Future<String> readTemplateFileAsString(String name) {
+  return File('templates/$name.mustache').readAsString();
 }
