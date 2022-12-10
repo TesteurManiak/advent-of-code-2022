@@ -1,6 +1,7 @@
 import 'package:test/test.dart';
 
 import '../solutions/day09.dart';
+import 'utils/read_input.dart';
 
 void main() {
   group('Day09', () {
@@ -11,18 +12,9 @@ void main() {
     });
 
     group('part1', () {
-      final inputLines = <String>[
-        'R 4',
-        'U 4',
-        'L 3',
-        'D 1',
-        'R 4',
-        'D 1',
-        'L 5',
-        'R 2',
-      ];
-
-      setUp(() => day.input.inputAsList = inputLines);
+      setUp(() {
+        day.input.inputAsList = readInputAsLines('aoc09-1.txt');
+      });
 
       test('solvePart1', () {
         final result = day.solvePart1();
@@ -31,18 +23,9 @@ void main() {
     });
 
     group('part2', () {
-      final inputLines = <String>[
-        'R 5',
-        'U 8',
-        'L 8',
-        'D 3',
-        'R 17',
-        'D 10',
-        'L 25',
-        'U 20',
-      ];
-
-      setUp(() => day.input.inputAsList = inputLines);
+      setUp(() {
+        day.input.inputAsList = readInputAsLines('aoc09-2.txt');
+      });
 
       test('part2', () {
         final result = day.solvePart2();

@@ -20,7 +20,7 @@ class InputUtil {
         _inputAsList = _readInputDayAsList(day);
 
   static String _createInputPath(int day) {
-    String dayString = day.toString().padLeft(2, '0');
+    final dayString = day.toString().padLeft(2, '0');
     return './input/aoc$dayString.txt';
   }
 
