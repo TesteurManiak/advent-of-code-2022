@@ -22,7 +22,7 @@ void main(List<String?> args) {
     printHelper();
     return;
   } else if (args.length == 1 && args[0].isAllArgument()) {
-    days.forEach((day) => day.printSolutions());
+    for (final day in days) day.printSolutions();
     return;
   } else if (args.length == 2 && args[0].isDayArgument()) {
     final day = int.parse(args[1]!);

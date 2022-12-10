@@ -73,7 +73,7 @@ class Field<T> {
     Iterable<Position> positions,
     VoidFieldCallback callback,
   ) {
-    positions.forEach((position) => callback(position.x, position.y));
+    for (final position in positions) callback(position.x, position.y);
   }
 
   /// Returns all adjacent cells to the given position. This does `NOT` include

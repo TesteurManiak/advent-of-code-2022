@@ -51,10 +51,10 @@ class CommandLine {
 }
 
 class MyGrid {
-  MyGrid(int knots) : knotPositions = List.filled(knots, Position(0, 0));
+  MyGrid(int knots) : knotPositions = List.filled(knots, const Position(0, 0));
 
   final List<Position> knotPositions;
-  final tailPositions = <Position>{Position(0, 0)};
+  final tailPositions = <Position>{const Position(0, 0)};
 
   void moveHead(CommandLine command) {
     for (int i = 0; i < command.steps; i++) {

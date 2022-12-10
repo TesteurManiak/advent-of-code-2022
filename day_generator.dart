@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:io';
 
-const year = '2022';
-const session =
-    '53616c7465645f5fbaa4b5351d60110dd4c7a466cfd7b671d03b77d110ef2c634f5b2188afbf39a852d3c7d6944bb2edd4b9f556b13760f7129045fdd68e637c';
-
 /// Small Program to be used to generate files and boilerplate for a given day.\
 /// Call with `dart run day_generator.dart <day>`
 void main(List<String?> args) async {
+  const year = '2022';
+  const session =
+      '53616c7465645f5fbaa4b5351d60110dd4c7a466cfd7b671d03b77d110ef2c634f5b2188afbf39a852d3c7d6944bb2edd4b9f556b13760f7129045fdd68e637c';
+
   if (args.length > 1) {
     print('Please call with: <dayNumber>');
     return;
