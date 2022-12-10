@@ -31,6 +31,7 @@ class Day10 extends GenericDay {
   @override
   solvePart2() {
     final instructions = parseInput();
+    final lines = <String>[];
 
     int cycles = 0;
     int registerX = 1;
@@ -49,14 +50,14 @@ class Day10 extends GenericDay {
         crtPos++;
 
         if (cycles % 40 == 0) {
-          print(sb.toString());
+          lines.add(sb.toString());
           sb.clear();
           crtPos = 0;
         }
       }
       registerX += instruction.argument;
     }
-    return null;
+    return '\n${lines.join('\n')}';
   }
 }
 

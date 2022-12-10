@@ -165,7 +165,8 @@ noop''';
 
     group('part2', () {
       test('solvePart2', () {
-        day.solvePart2();
+        final result = day.solvePart2();
+        print(result);
       });
     });
   });
