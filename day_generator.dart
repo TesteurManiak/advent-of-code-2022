@@ -43,9 +43,8 @@ void main(List<String?> args) async {
   );
 
   // Create test file
-  unawaited(
-    File('test/day${dayNumber}_test.dart').writeTestFile(dayNumber),
-  );
+  unawaited(File('test/test_input/aoc${dayNumber}.txt').writeAsString(''));
+  unawaited(File('test/day${dayNumber}_test.dart').writeTestFile(dayNumber));
 
   // export new day in index file
   File('solutions/index.dart').writeAsString(
