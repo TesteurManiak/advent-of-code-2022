@@ -30,7 +30,6 @@ class Day10 extends GenericDay {
 
   @override
   solvePart2() {
-    const crtWidth = 40;
     final instructions = parseInput();
 
     int cycles = 0;
@@ -39,21 +38,17 @@ class Day10 extends GenericDay {
     final sb = StringBuffer();
     for (final instruction in instructions) {
       for (int i = 0; i < instruction.cyclesToComplete; i++) {
-        cycles++;
         final spritePosition = <int>{
           registerX - 1,
           registerX,
           registerX + 1,
         };
 
-        if (spritePosition.contains(crtPos)) {
-          sb.write('#');
-        } else {
-          sb.write('.');
-        }
+        cycles++;
+        sb.write(spritePosition.contains(crtPos) ? '#' : '.');
         crtPos++;
 
-        if (cycles % crtWidth == 0) {
+        if (cycles % 40 == 0) {
           print(sb.toString());
           sb.clear();
           crtPos = 0;
