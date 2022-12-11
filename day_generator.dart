@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
-import 'package:html/parser.dart' as html;
+import 'package:html/parser.dart' as parser;
 import 'package:http/http.dart' as http;
 
 /// Small Program to be used to generate files and boilerplate for a given day.\
@@ -120,10 +120,12 @@ extension on String {
   }
 }
 
+/// Return the first code block found in the page's body which is often the
+/// example input.
 Future<String> scrapExample(String year, int day) async {
   final uri = Uri.parse('https://adventofcode.com/$year/day/$day');
   final response = await http.Client().get(uri);
-  final document = html.parse(response.body);
+  final document = parser.parse(response.body);
 
   return document.body
           ?.querySelector('main')
