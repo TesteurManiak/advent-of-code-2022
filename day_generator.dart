@@ -8,12 +8,8 @@ void main(List<String?> args) async {
   const session =
       '53616c7465645f5fbaa4b5351d60110dd4c7a466cfd7b671d03b77d110ef2c634f5b2188afbf39a852d3c7d6944bb2edd4b9f556b13760f7129045fdd68e637c';
 
-  if (args.length > 1) {
-    print('Please call with: <dayNumber>');
-    return;
-  }
-
   final String dayNumber;
+  final bool withTest;
 
   // input through terminal
   if (args.length == 0) {
@@ -25,9 +21,11 @@ void main(List<String?> args) async {
     }
     // pad day number to have 2 digits
     dayNumber = int.parse(input).toString().padLeft(2, '0');
+    withTest = false;
     // input from CLI call
   } else {
     dayNumber = int.parse(args[0]!).toString().padLeft(2, '0');
+    withTest = args.length > 1 && args[1]!.isWithTestArg();
   }
 
   // inform user
@@ -43,8 +41,10 @@ void main(List<String?> args) async {
   );
 
   // Create test file
-  unawaited(File('test/test_input/aoc${dayNumber}.txt').writeAsString(''));
-  unawaited(File('test/day${dayNumber}_test.dart').writeTestFile(dayNumber));
+  if (withTest) {
+    unawaited(File('test/test_input/aoc${dayNumber}.txt').writeAsString(''));
+    unawaited(File('test/day${dayNumber}_test.dart').writeTestFile(dayNumber));
+  }
 
   // export new day in index file
   await File('solutions/index.dart').writeAsString(
@@ -63,13 +63,14 @@ void main(List<String?> args) async {
     request.cookies.add(Cookie("session", session));
     final response = await request.close();
     final dataPath = 'input/aoc$dayNumber.txt';
-    // unawaited(File(dataPath).create());
+
     await response.pipe(File(dataPath).openWrite());
   } catch (e) {
     print('Error loading file: $e');
   }
 
   print('All set, Good luck!');
+  return;
 }
 
 extension WriteTemplateExtension on File {
@@ -94,4 +95,10 @@ extension WriteTemplateExtension on File {
 
 Future<String> readTemplateFileAsString(String name) {
   return File('templates/$name.mustache').readAsString();
+}
+
+extension on String {
+  bool isWithTestArg() {
+    return this == '--with-test';
+  }
 }
