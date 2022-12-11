@@ -80,3 +80,8 @@ extension StringExtensions on String {
   /// ```
   Set<String> toSet() => Set.from(split(''));
 }
+
+extension IntExtension on int {
+  /// Return the lowest common multiple of two integers.
+  int lcm(int other) => (this * other) ~/ gcd(other);
+}
