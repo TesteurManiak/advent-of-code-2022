@@ -22,7 +22,6 @@ linter:
     - always_declare_return_types
     - avoid_bool_literals_in_conditional_expressions
     - avoid_escaping_inner_quotes
-    - avoid_positional_boolean_parameters
     - constant_identifier_names
     - exhaustive_cases
     - parameter_assignments
