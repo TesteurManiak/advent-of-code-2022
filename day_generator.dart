@@ -1,6 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:collection/collection.dart';
+import 'package:html/parser.dart' as html;
+import 'package:http/http.dart' as http;
+
 /// Small Program to be used to generate files and boilerplate for a given day.\
 /// Call with `dart run day_generator.dart <day>`
 void main(List<String?> args) async {
@@ -8,6 +12,7 @@ void main(List<String?> args) async {
   const session =
       '53616c7465645f5fbaa4b5351d60110dd4c7a466cfd7b671d03b77d110ef2c634f5b2188afbf39a852d3c7d6944bb2edd4b9f556b13760f7129045fdd68e637c';
 
+  final int dayInt;
   final String dayNumber;
   final bool withTest;
 
@@ -19,12 +24,14 @@ void main(List<String?> args) async {
       print('No input given, exiting');
       return;
     }
+    dayInt = int.parse(input);
     // pad day number to have 2 digits
-    dayNumber = int.parse(input).toString().padLeft(2, '0');
+    dayNumber = dayInt.toString().padLeft(2, '0');
     withTest = false;
     // input from CLI call
   } else {
-    dayNumber = int.parse(args[0]!).toString().padLeft(2, '0');
+    dayInt = int.parse(args[0]!);
+    dayNumber = dayInt.toString().padLeft(2, '0');
     withTest = args.length > 1 && args[1]!.isWithTestArg();
   }
 
@@ -36,14 +43,18 @@ void main(List<String?> args) async {
   unawaited(
     File('solutions/$dayFileName').writeDayFile(
       dayString: dayNumber,
-      dayInt: int.parse(dayNumber),
+      dayInt: dayInt,
     ),
   );
 
   // Create test file
   if (withTest) {
-    unawaited(File('test/test_input/aoc${dayNumber}.txt').writeAsString(''));
+    unawaited(
+      File('test/test_input/aoc${dayNumber}.txt')
+          .writeTestInputFile(year: year, day: dayInt),
+    );
     unawaited(File('test/day${dayNumber}_test.dart').writeTestFile(dayNumber));
+    unawaited(scrapExample(year, dayInt));
   }
 
   // export new day in index file
@@ -90,6 +101,13 @@ extension WriteTemplateExtension on File {
 
     await writeAsString(template);
   }
+
+  Future<void> writeTestInputFile({
+    required String year,
+    required int day,
+  }) async {
+    await writeAsString(await scrapExample(year, day));
+  }
 }
 
 Future<String> readTemplateFileAsString(String name) {
@@ -100,4 +118,20 @@ extension on String {
   bool isWithTestArg() {
     return this == '--with-test';
   }
+}
+
+Future<String> scrapExample(String year, int day) async {
+  final uri = Uri.parse('https://adventofcode.com/$year/day/$day');
+  final response = await http.Client().get(uri);
+  final document = html.parse(response.body);
+
+  return document.body
+          ?.querySelector('main')
+          ?.querySelector('article')
+          ?.querySelectorAll('pre')
+          .firstOrNull
+          ?.querySelectorAll('code')
+          .firstOrNull
+          ?.text ??
+      '';
 }
