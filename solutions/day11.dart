@@ -38,7 +38,7 @@ class Day11 extends GenericDay {
           monkey.numberOfInspections++;
           int worryLevel = monkey.operation(item);
           worryLevel = (worryLevel / 3).floor();
-          if (monkey.test(worryLevel)) {
+          if (worryLevel.isDivisibleBy(monkey.mod)) {
             monkeys[monkey.targetIfTrue].items.add(worryLevel);
           } else {
             monkeys[monkey.targetIfFalse].items.add(worryLevel);
@@ -62,7 +62,7 @@ class Day11 extends GenericDay {
           monkey.numberOfInspections++;
           int worryLevel = monkey.operation(item);
           worryLevel %= mod;
-          if (monkey.test(worryLevel)) {
+          if (worryLevel.isDivisibleBy(monkey.mod)) {
             monkeys[monkey.targetIfTrue].items.add(worryLevel);
           } else {
             monkeys[monkey.targetIfFalse].items.add(worryLevel);
@@ -81,7 +81,6 @@ class Monkey {
     required this.id,
     required this.items,
     required this.operation,
-    required this.test,
     required this.targetIfTrue,
     required this.targetIfFalse,
     required this.mod,
@@ -91,7 +90,7 @@ class Monkey {
     final id = group[0].skip(7).take(1);
     final startingItems = group[1].skip(18).split(',').map(int.parse).toList();
     final operation = group[2].skip(13);
-    final test = group[3].skip(8);
+    final mod = int.parse(group[3].split(' ').last);
     final targetIfTrue = group[4].skip(29);
     final targetIfFalse = group[5].skip(30);
 
@@ -99,17 +98,15 @@ class Monkey {
       id: int.parse(id),
       items: startingItems,
       operation: operations[operation]!,
-      test: tests[test]!,
       targetIfTrue: int.parse(targetIfTrue),
       targetIfFalse: int.parse(targetIfFalse),
-      mod: int.parse(group[3].split(' ').last),
+      mod: mod,
     );
   }
 
   final int id;
   final List<int> items;
   final OperationFunction operation;
-  final TestFunction test;
   final int targetIfTrue;
   final int targetIfFalse;
   final int mod;
@@ -130,15 +127,8 @@ final operations = <String, OperationFunction>{
   'new = old * 7': (old) => old * 7,
 };
 
-typedef TestFunction = bool Function(int worryLevel);
-
-final tests = <String, TestFunction>{
-  'divisible by 19': (worryLevel) => worryLevel % 19 == 0,
-  'divisible by 7': (worryLevel) => worryLevel % 7 == 0,
-  'divisible by 17': (worryLevel) => worryLevel % 17 == 0,
-  'divisible by 13': (worryLevel) => worryLevel % 13 == 0,
-  'divisible by 11': (worryLevel) => worryLevel % 11 == 0,
-  'divisible by 5': (worryLevel) => worryLevel % 5 == 0,
-  'divisible by 3': (worryLevel) => worryLevel % 3 == 0,
-  'divisible by 2': (worryLevel) => worryLevel.isEven,
-};
+extension on int {
+  bool isDivisibleBy(int number) {
+    return this % number == 0;
+  }
+}
