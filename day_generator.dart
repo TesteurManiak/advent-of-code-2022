@@ -70,7 +70,6 @@ void main(List<String?> args) async {
   }
 
   print('All set, Good luck!');
-  return;
 }
 
 extension WriteTemplateExtension on File {
