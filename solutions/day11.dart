@@ -1,5 +1,6 @@
 import '../utils/extensions.dart';
 import '../utils/index.dart';
+import '../utils/int_utils.dart';
 
 class Day11 extends GenericDay {
   Day11() : super(11);
@@ -53,16 +54,18 @@ class Day11 extends GenericDay {
   @override
   int solvePart2() {
     final monkeys = parseInput();
+    final mod = monkeys.map((m) => m.mod).reduce(lcm);
 
     for (int i = 0; i < 10000; i++) {
       for (final monkey in monkeys) {
         for (final item in monkey.items) {
           monkey.numberOfInspections++;
-          final int newItem = monkey.operation(item);
-          if (monkey.test(newItem)) {
-            monkeys[monkey.targetIfTrue].items.add(newItem);
+          int worryLevel = monkey.operation(item);
+          worryLevel %= mod;
+          if (monkey.test(worryLevel)) {
+            monkeys[monkey.targetIfTrue].items.add(worryLevel);
           } else {
-            monkeys[monkey.targetIfFalse].items.add(newItem);
+            monkeys[monkey.targetIfFalse].items.add(worryLevel);
           }
         }
         monkey.items.clear();
@@ -81,6 +84,7 @@ class Monkey {
     required this.test,
     required this.targetIfTrue,
     required this.targetIfFalse,
+    required this.mod,
   });
 
   factory Monkey.fromGroup(List<String> group) {
@@ -98,6 +102,7 @@ class Monkey {
       test: tests[test]!,
       targetIfTrue: int.parse(targetIfTrue),
       targetIfFalse: int.parse(targetIfFalse),
+      mod: int.parse(group[3].split(' ').last),
     );
   }
 
@@ -107,6 +112,7 @@ class Monkey {
   final TestFunction test;
   final int targetIfTrue;
   final int targetIfFalse;
+  final int mod;
 
   int numberOfInspections = 0;
 }
