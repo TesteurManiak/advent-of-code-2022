@@ -104,6 +104,7 @@ Future<void> main(List<String?> args) async {
     await response.pipe(File(dataPath).openWrite());
   } catch (e) {
     print('Error loading file: $e');
+    exit(2);
   }
 
   print('All set, Good luck!');
