@@ -13,14 +13,25 @@ Future<void> main(List<String?> args) async {
       '53616c7465645f5fbaa4b5351d60110dd4c7a466cfd7b671d03b77d110ef2c634f5b2188afbf39a852d3c7d6944bb2edd4b9f556b13760f7129045fdd68e637c';
 
   final parser = ArgParser()
-    ..addOption('year', abbr: 'y', defaultsTo: DateTime.now().year.toString())
-    ..addFlag('with-test', negatable: false)
-    ..addFlag('help', abbr: 'h', negatable: false, callback: printHelper);
+    ..addSeparator('Usage: dart day_generator.dart <day> [options] [flags]')
+    ..addSeparator('Options:')
+    ..addOption(
+      'year',
+      abbr: 'y',
+      defaultsTo: DateTime.now().year.toString(),
+      valueHelp: 'year',
+      help: 'The year for which to generate the files.',
+    )
+    ..addSeparator('Flags:')
+    ..addFlag(
+      'with-test',
+      negatable: false,
+      help: 'Generate test files as well.',
+    )
+    ..addFlag('help', abbr: 'h', negatable: false, hide: true);
 
   final results = parser.parse(args.whereType<String>());
   final year = results['year'] as String;
-  final withTest = results['with-test'] as bool;
-  final help = results['help'] as bool;
   final int dayInt;
   final String dayNumber;
 
@@ -30,14 +41,17 @@ Future<void> main(List<String?> args) async {
     final input = stdin.readLineSync();
     if (input == null) {
       print('No input given, exiting');
-      return;
+      exit(0);
     }
     dayInt = int.parse(input);
     // pad day number to have 2 digits
     dayNumber = dayInt.toString().padLeft(2, '0');
     // input from CLI call
   } else {
-    if (help) return;
+    if (results.wasParsed('help')) {
+      print(parser.usage);
+      exit(0);
+    }
     dayInt = int.parse(args[0]!);
     dayNumber = dayInt.toString().padLeft(2, '0');
   }
@@ -57,7 +71,7 @@ Future<void> main(List<String?> args) async {
   );
 
   // Create test file
-  if (withTest) {
+  if (results.wasParsed('with-test')) {
     futures.addAll([
       File('test/test_input/aoc${dayNumber}.txt')
           .writeTestInputFile(year: year, day: dayInt),
@@ -156,18 +170,4 @@ Future<String> scrapExample(String year, int day) async {
           .firstOrNull
           ?.text ??
       '';
-}
-
-void printHelper(bool enabled) {
-  if (enabled) {
-    print('''
-Usage: dart run day_generator.dart <day> [options] [flags]
-
-Options:
-  -y, --year <year>  The year for which to generate the files. Defaults to the current year.
-
-Flags:
-  --with-test  Generate test files as well.
-    ''');
-  }
 }

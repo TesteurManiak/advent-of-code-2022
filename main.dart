@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:args/args.dart';
 import 'package:collection/collection.dart';
 
@@ -22,40 +24,40 @@ final days = <GenericDay>[
 
 void main(List<String?> args) {
   final parser = ArgParser()
-    ..addFlag('all', abbr: 'a', negatable: false, callback: printAllSolution)
-    ..addFlag('help', abbr: 'h', negatable: false, callback: printHelper)
-    ..addOption('day', abbr: 'd', defaultsTo: days.last.day.toString());
+    ..addSeparator('Usage: dart main.dart [options] [flags]')
+    ..addSeparator('Options:')
+    ..addOption(
+      'day',
+      abbr: 'd',
+      defaultsTo: days.last.day.toString(),
+      valueHelp: 'day',
+      help: 'Show solutions for a specific day',
+    )
+    ..addSeparator('Flags:')
+    ..addFlag(
+      'all',
+      abbr: 'a',
+      negatable: false,
+      callback: printAllSolution,
+      help: 'Show all solutions',
+    )
+    ..addFlag('help', abbr: 'h', negatable: false, hide: true);
 
   final results = parser.parse(args.whereType<String>());
-  final all = results['all'] as bool;
-  final help = results['help'] as bool;
   final day = results['day'] as String;
 
-  if (all || help) {
-    return;
-  } else {
-    printSolutionForDay(int.parse(day));
+  if (results.wasParsed('help')) {
+    print(parser.usage);
+    exit(0);
   }
-}
 
-void printHelper(bool enabled) {
-  if (enabled) {
-    print(
-      '''
-Usage: dart main.dart <command>
-
-Options:
-  -h, --help             Show this help message
-  -a, --all              Show all solutions
-  -d <day>, --day <day>  Show solutions for a specific day
-''',
-    );
-  }
+  printSolutionForDay(int.parse(day));
 }
 
 void printAllSolution(bool enabled) {
   if (enabled) {
     for (final day in days) day.printSolutions();
+    exit(0);
   }
 }
 
