@@ -1,3 +1,5 @@
+import 'package:collection/collection.dart';
+
 extension NumIterableExtension<T extends num> on Iterable<T> {
   /// Returns an [Iterable] of the top [count] elements with the highest value.
   ///
@@ -21,6 +23,13 @@ extension NumIterableExtension<T extends num> on Iterable<T> {
     assert(count >= 0);
     final list = toList()..sort();
     return list.take(count);
+  }
+}
+
+extension NullableNumIterableExtension<T extends num?> on Iterable<T> {
+  T? get min {
+    final list = toList().whereType<num>();
+    return list.minOrNull as T?;
   }
 }
 

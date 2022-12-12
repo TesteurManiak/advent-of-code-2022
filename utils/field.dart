@@ -54,6 +54,16 @@ class Field<T> {
   /// Returns the maximum value in this field.
   T get maxValue => max<T>(field.expand((element) => element))!;
 
+  Iterable<Position> locationsWhere(bool Function(T element) predicate) sync* {
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x++) {
+        if (predicate(field[y][x])) {
+          yield Position(x, y);
+        }
+      }
+    }
+  }
+
   /// Executes the given callback for every position on this field.
   void forEach(VoidFieldCallback callback) {
     for (int y = 0; y < height; y++) {
@@ -132,8 +142,9 @@ class Field<T> {
 /// Extension for [Field]s where [T] is of type [int].
 extension IntegerField on Field<int> {
   /// Increments the values of Position `x` `y`.
-  dynamic increment(int x, int y) =>
-      this.setValueAt(x, y, this.getValueAt(x, y) + 1);
+  int increment(int x, int y) {
+    return this.setValueAt(x, y, this.getValueAt(x, y) + 1);
+  }
 
   /// Convenience method to create a Field from a single String, where the
   /// String is a "block" of integers.
