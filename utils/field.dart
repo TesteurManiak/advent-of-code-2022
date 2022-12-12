@@ -53,6 +53,7 @@ class Field<T> {
   /// Returns the maximum value in this field.
   T get maxValue => max<T>(field.expand((element) => element))!;
 
+  /// Returns an iterable of all positions where the given [predicate] is true.
   Iterable<Position> locationsWhere(bool Function(T element) predicate) sync* {
     for (int y = 0; y < height; y++) {
       for (int x = 0; x < width; x++) {
