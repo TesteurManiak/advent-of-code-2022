@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 
 /// Small Program to be used to generate files and boilerplate for a given day.\
 /// Call with `dart run day_generator.dart <day>`
-void main(List<String?> args) async {
+Future<void> main(List<String?> args) async {
   const year = '2022';
   const session =
       '53616c7465645f5fbaa4b5351d60110dd4c7a466cfd7b671d03b77d110ef2c634f5b2188afbf39a852d3c7d6944bb2edd4b9f556b13760f7129045fdd68e637c';
@@ -36,11 +36,13 @@ void main(List<String?> args) async {
   }
 
   // inform user
-  print('Creating day: $dayNumber');
+  print('Creating day: $dayNumber files');
+
+  final futures = <Future>[];
 
   // Create lib file
   final dayFileName = 'day$dayNumber.dart';
-  unawaited(
+  futures.add(
     File('solutions/$dayFileName').writeDayFile(
       dayString: dayNumber,
       dayInt: dayInt,
@@ -49,19 +51,22 @@ void main(List<String?> args) async {
 
   // Create test file
   if (withTest) {
-    unawaited(
+    futures.addAll([
       File('test/test_input/aoc${dayNumber}.txt')
           .writeTestInputFile(year: year, day: dayInt),
-    );
-    unawaited(File('test/day${dayNumber}_test.dart').writeTestFile(dayNumber));
-    unawaited(scrapExample(year, dayInt));
+      File('test/day${dayNumber}_test.dart').writeTestFile(dayNumber),
+    ]);
   }
 
   // export new day in index file
-  await File('solutions/index.dart').writeAsString(
-    "export 'day$dayNumber.dart';\n",
-    mode: FileMode.append,
+  futures.add(
+    File('solutions/index.dart').writeAsString(
+      "export 'day$dayNumber.dart';\n",
+      mode: FileMode.append,
+    ),
   );
+
+  await Future.wait(futures);
 
   // Create input file
   print('Loading input from adventofcode.com...');
@@ -114,7 +119,13 @@ extension WriteTemplateExtension on File {
   }) async {
     final alreadyExists = await exists();
     if (alreadyExists) return;
-    await writeAsString(await scrapExample(year, day));
+
+    try {
+      final example = await scrapExample(year, day);
+      await writeAsString(example);
+    } catch (e) {
+      print('Error fetching example: $e');
+    }
   }
 }
 
