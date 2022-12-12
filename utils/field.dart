@@ -17,8 +17,8 @@ class Field<T> {
         width = field[0].length;
 
   final List<List<T>> field;
-  int height;
-  int width;
+  late final int height;
+  late final int width;
 
   /// Returns the value at the given position.
   T getValueAtPosition(Position position) => field[position.y][position.x];
