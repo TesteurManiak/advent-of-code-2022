@@ -1,3 +1,4 @@
+import 'package:args/args.dart';
 import 'package:collection/collection.dart';
 
 import 'solutions/index.dart';
@@ -20,32 +21,42 @@ final days = <GenericDay>[
 ];
 
 void main(List<String?> args) {
-  if (args.length == 1 && args[0].isHelperArgument()) {
-    printHelper();
-    return;
-  } else if (args.length == 1 && args[0].isAllArgument()) {
-    for (final day in days) day.printSolutions();
-    return;
-  } else if (args.length == 2 && args[0].isDayArgument()) {
-    final day = int.parse(args[1]!);
-    printSolutionForDay(day);
-    return;
-  }
+  final parser = ArgParser()
+    ..addFlag('all', abbr: 'a', negatable: false, callback: printAllSolution)
+    ..addFlag('help', abbr: 'h', negatable: false, callback: printHelper)
+    ..addOption('day', abbr: 'd', defaultsTo: days.last.day.toString());
 
-  days.last.printSolutions();
+  final results = parser.parse(args.whereType<String>());
+  final all = results['all'] as bool;
+  final help = results['help'] as bool;
+  final day = results['day'] as String;
+
+  if (all || help) {
+    return;
+  } else {
+    printSolutionForDay(int.parse(day));
+  }
 }
 
-void printHelper() {
-  print(
-    '''
+void printHelper(bool enabled) {
+  if (enabled) {
+    print(
+      '''
 Usage: dart main.dart <command>
 
-Global Options:
+Options:
   -h, --help             Show this help message
   -a, --all              Show all solutions
   -d <day>, --day <day>  Show solutions for a specific day
 ''',
-  );
+    );
+  }
+}
+
+void printAllSolution(bool enabled) {
+  if (enabled) {
+    for (final day in days) day.printSolutions();
+  }
 }
 
 void printSolutionForDay(int day) {
@@ -54,19 +65,5 @@ void printSolutionForDay(int day) {
     print('No solution found for day $day');
   } else {
     daySolution.printSolutions();
-  }
-}
-
-extension ArgsMatcher on String? {
-  bool isHelperArgument() {
-    return this == '-h' || this == '--help';
-  }
-
-  bool isAllArgument() {
-    return this == '-a' || this == '--all';
-  }
-
-  bool isDayArgument() {
-    return this == '-d' || this == '--day';
   }
 }
