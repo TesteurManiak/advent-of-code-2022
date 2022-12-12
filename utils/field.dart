@@ -1,8 +1,7 @@
 import 'package:quiver/iterables.dart';
 import 'package:tuple/tuple.dart';
 
-typedef Position = Tuple2<int, int>;
-typedef VoidFieldCallback = void Function(int, int);
+typedef VoidFieldCallback = void Function(int x, int y);
 
 /// A helper class for easier work with 2D data.
 class Field<T> {
@@ -157,7 +156,9 @@ extension IntegerField on Field<int> {
   }
 }
 
-extension CoordinateLocator on Position {
+class Position extends Tuple2<int, int> {
+  const Position(int x, int y) : super(x, y);
+
   int get x => item1;
   int get y => item2;
 }
