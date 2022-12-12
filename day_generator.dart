@@ -1,20 +1,25 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:args/args.dart';
 import 'package:collection/collection.dart';
-import 'package:html/parser.dart' as parser;
+import 'package:html/parser.dart' as htmlParser;
 import 'package:http/http.dart' as http;
 
 /// Small Program to be used to generate files and boilerplate for a given day.\
 /// Call with `dart run day_generator.dart <day>`
 Future<void> main(List<String?> args) async {
-  const year = '2022';
   const session =
       '53616c7465645f5fbaa4b5351d60110dd4c7a466cfd7b671d03b77d110ef2c634f5b2188afbf39a852d3c7d6944bb2edd4b9f556b13760f7129045fdd68e637c';
 
+  final parser = ArgParser()
+    ..addOption('year', abbr: 'y', defaultsTo: DateTime.now().year.toString())
+    ..addFlag('with-test');
+  final results = parser.parse(args.whereType<String>());
+  final year = results['year'] as String;
+  final withTest = results['with-test'] as bool;
   final int dayInt;
   final String dayNumber;
-  final bool withTest;
 
   // input through terminal
   if (args.length == 0) {
@@ -27,12 +32,10 @@ Future<void> main(List<String?> args) async {
     dayInt = int.parse(input);
     // pad day number to have 2 digits
     dayNumber = dayInt.toString().padLeft(2, '0');
-    withTest = false;
     // input from CLI call
   } else {
     dayInt = int.parse(args[0]!);
     dayNumber = dayInt.toString().padLeft(2, '0');
-    withTest = args.length > 1 && args[1]!.isWithTestArg();
   }
 
   // inform user
@@ -133,18 +136,12 @@ Future<String> readTemplateFileAsString(String name) {
   return File('templates/$name.mustache').readAsString();
 }
 
-extension on String {
-  bool isWithTestArg() {
-    return this == '--with-test';
-  }
-}
-
 /// Return the first code block found in the page's body which is often the
 /// example input.
 Future<String> scrapExample(String year, int day) async {
   final uri = Uri.parse('https://adventofcode.com/$year/day/$day');
   final response = await http.Client().get(uri);
-  final document = parser.parse(response.body);
+  final document = htmlParser.parse(response.body);
 
   return document.body
           ?.querySelector('main')
