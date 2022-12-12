@@ -9,9 +9,8 @@ class Day12 extends GenericDay {
   HeightsGrid parseInput() {
     final content = input
         .getPerLine()
-        .where((e) => e.isNotEmpty)
-        .map((e) => e.split(''))
-        .where((e) => e.isNotEmpty)
+        .where((e) => e.trim().isNotEmpty)
+        .map((e) => e.trim().split(''))
         .toList();
     return HeightsGrid.fromLines(content);
   }
@@ -19,6 +18,7 @@ class Day12 extends GenericDay {
   @override
   int? solvePart1() {
     final grid = parseInput();
+
     return grid.leastStepsToEnd(grid.start);
   }
 
