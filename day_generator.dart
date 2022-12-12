@@ -88,6 +88,9 @@ extension WriteTemplateExtension on File {
     required String dayString,
     required int dayInt,
   }) async {
+    final alreadyExists = await exists();
+    if (alreadyExists) return;
+
     String template = await readTemplateFileAsString('day.dart');
     template = template.replaceAll(RegExp('{{dayString}}'), dayString);
     template = template.replaceAll(RegExp('{{dayInt}}'), dayInt.toString());
@@ -96,6 +99,9 @@ extension WriteTemplateExtension on File {
   }
 
   Future<void> writeTestFile(String dayString) async {
+    final alreadyExists = await exists();
+    if (alreadyExists) return;
+
     String template = await readTemplateFileAsString('day_test.dart');
     template = template.replaceAll(RegExp('{{dayString}}'), dayString);
 
@@ -106,6 +112,8 @@ extension WriteTemplateExtension on File {
     required String year,
     required int day,
   }) async {
+    final alreadyExists = await exists();
+    if (alreadyExists) return;
     await writeAsString(await scrapExample(year, day));
   }
 }
