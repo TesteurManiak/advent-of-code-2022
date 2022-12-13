@@ -18,7 +18,7 @@ class Day13 extends GenericDay {
   }
 
   @override
-  Iterable<Tuple2<CustomListInt, CustomListInt>> parseInput() sync* {
+  Iterable<SignalPair> parseInput() sync* {
     final inputLines = input.getPerLine()..removeWhere((e) => e.isEmpty);
 
     final groupedList = <List<dynamic>>[];
@@ -27,7 +27,7 @@ class Day13 extends GenericDay {
       groupedList.add(parsedLine);
 
       if (groupedList.length == 2) {
-        yield Tuple2(
+        yield SignalPair(
           recursiveParse(groupedList[0]),
           recursiveParse(groupedList[1]),
         );
@@ -42,13 +42,11 @@ class Day13 extends GenericDay {
     final indexesOrdered = <int>[];
 
     for (int i = 0; i < result.length; i++) {
-      final left = result[i].item1;
-      final right = result[i].item2;
-      final ordered = areOrdered(left, right) > 0;
+      final pair = result[i];
+      final ordered = areOrdered(pair.left, pair.right) > 0;
 
       if (ordered) indexesOrdered.add(i + 1);
     }
-
     return indexesOrdered.sum;
   }
 
@@ -86,6 +84,13 @@ class Day13 extends GenericDay {
     }
     return -1;
   }
+}
+
+class SignalPair extends Tuple2<CustomListInt, CustomListInt> {
+  SignalPair(CustomListInt left, CustomListInt right) : super(left, right);
+
+  CustomListInt get left => item1;
+  CustomListInt get right => item2;
 }
 
 class CustomListInt {
