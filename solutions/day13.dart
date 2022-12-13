@@ -18,18 +18,27 @@ class Day13 extends GenericDay {
   }
 
   @override
-  Iterable<SignalPair> parseInput() sync* {
+  Iterable<CustomListInt> parseInput() sync* {
     final inputLines = input.getPerLine()..removeWhere((e) => e.isEmpty);
 
     final groupedList = <List<dynamic>>[];
     for (final line in inputLines) {
       final parsedLine = jsonDecode(line) as List;
+      yield recursiveParse(parsedLine);
       groupedList.add(parsedLine);
+    }
+  }
 
+  Iterable<SignalPair> parsePart1() sync* {
+    final inputs = parseInput();
+    final groupedList = <CustomListInt>[];
+
+    for (final input in inputs) {
+      groupedList.add(input);
       if (groupedList.length == 2) {
         yield SignalPair(
-          recursiveParse(groupedList[0]),
-          recursiveParse(groupedList[1]),
+          groupedList[0],
+          groupedList[1],
         );
         groupedList.clear();
       }
@@ -38,7 +47,7 @@ class Day13 extends GenericDay {
 
   @override
   int solvePart1() {
-    final result = parseInput().toList();
+    final result = parsePart1().toList();
     final indexesOrdered = <int>[];
 
     for (int i = 0; i < result.length; i++) {
@@ -52,7 +61,15 @@ class Day13 extends GenericDay {
 
   @override
   int solvePart2() {
-    return 0;
+    const startKey = CustomListInt.list([CustomListInt.int(2)]);
+    const endKey = CustomListInt.list([CustomListInt.int(6)]);
+
+    List<CustomListInt> result = parseInput().toList();
+    result.addAll([startKey, endKey]);
+    result.sort(areOrdered);
+    result = result.reversed.toList();
+
+    return (result.indexOf(startKey) + 1) * (result.indexOf(endKey) + 1);
   }
 
   int areOrdered(CustomListInt left, CustomListInt right) {

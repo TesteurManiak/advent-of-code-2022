@@ -18,7 +18,7 @@ void main() {
     });
 
     group('solvePart2', () {
-      const expectedOutput = 0;
+      const expectedOutput = 140;
 
       test('returns $expectedOutput', () {
         expect(day.solvePart2(), expectedOutput);
