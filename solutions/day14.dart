@@ -65,10 +65,11 @@ class Day14 extends GenericDay {
   @override
   int solvePart2() {
     final segments = parseInput();
-    final limitY = segments.map((e) => math.max(e.start.y, e.end.y)).max;
+    final limitY = segments.map((e) => math.max(e.start.y, e.end.y)).max + 2;
     final sandWalls = <Position>{};
 
-    segments.add(Segment(Position(0, limitY + 2), Position(1000, limitY + 2)));
+    /// Add the bottom wall
+    segments.add(Segment(Position(0, limitY), Position(1000, limitY)));
 
     final walls = segments.expand((e) => e.points).toSet();
 
