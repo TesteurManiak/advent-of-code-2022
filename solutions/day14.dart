@@ -47,6 +47,7 @@ class Day14 extends GenericDay {
         )) {
           nextPos = nextPos.dropRight;
         } else {
+          // Not a diagonal so reset nextPos to sandPos
           nextPos = sandPos;
         }
       }
@@ -87,6 +88,7 @@ class Day14 extends GenericDay {
         )) {
           nextPos = nextPos.dropRight;
         } else {
+          // Not a diagonal so reset nextPos to sandPos
           nextPos = sandPos;
         }
       }
