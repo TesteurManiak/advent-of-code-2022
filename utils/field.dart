@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:quiver/iterables.dart';
 import 'package:tuple/tuple.dart';
 
@@ -162,4 +164,39 @@ class Position extends Tuple2<int, int> {
 
   int get x => item1;
   int get y => item2;
+
+  Position operator -(Position other) => Position(x - other.x, y - other.y);
+  Position operator +(Position other) => Position(x + other.x, y + other.y);
+
+  @override
+  String toString() => '($x, $y)';
+}
+
+class Segment {
+  const Segment(this.start, this.end);
+
+  final Position start;
+  final Position end;
+
+  /// Return all the points between start and end.
+  Set<Position> get points {
+    final points = <Position>{};
+    final xDiff = end.x - start.x;
+    final yDiff = end.y - start.y;
+    final xDir = xDiff.sign;
+    final yDir = yDiff.sign;
+    final xSteps = xDiff.abs();
+    final ySteps = yDiff.abs();
+    final steps = math.max(xSteps, ySteps);
+
+    for (int i = 0; i <= steps; i++) {
+      final x = start.x + (i * xDir * xSteps ~/ steps);
+      final y = start.y + (i * yDir * ySteps ~/ steps);
+      points.add(Position(x, y));
+    }
+    return points;
+  }
+
+  @override
+  String toString() => '$start -> $end';
 }

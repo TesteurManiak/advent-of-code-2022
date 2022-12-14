@@ -1,5 +1,3 @@
-import 'package:equatable/equatable.dart';
-
 import '../utils/index.dart';
 
 typedef MovementCallback = Position Function(Position knot);
@@ -79,18 +77,10 @@ class MyGrid {
   }
 }
 
-class Position extends Equatable {
-  const Position(this.x, this.y);
-
-  final int x;
-  final int y;
-
+extension on Position {
   bool isNextTo(Position other) {
     return (x - other.x).abs() <= 1 && (y - other.y).abs() <= 1;
   }
-
-  @override
-  List<Object?> get props => [x, y];
 }
 
 Position moveLeft(Position knot) => Position(knot.x - 1, knot.y);
