@@ -24,8 +24,7 @@ class Day15 extends GenericDay {
     final positionsWithoutBeacon = <Position>{};
 
     for (final sensor in sensors) {
-      final distance =
-          manhattanDistance(sensor.position, sensor.beaconPosition);
+      final distance = sensor.manhattanDistance(sensor.beaconPosition);
       final sensorX = sensor.position.x;
       final sensorY = sensor.position.y;
 
@@ -55,68 +54,27 @@ class Day15 extends GenericDay {
     final positionToCheck = <Position>{};
 
     for (final sensor in sensors) {
-      final distance =
-          manhattanDistance(sensor.position, sensor.beaconPosition);
-
-      positionToCheck
-          .addAll(getExternalBorderForPosition(sensor.position, distance));
+      positionToCheck.addAll(sensor.getExternalBorderForPosition());
     }
 
     for (final sensor in sensors) {
-      final distance =
-          manhattanDistance(sensor.position, sensor.beaconPosition);
+      final distance = sensor.manhattanDistance(sensor.beaconPosition);
 
       positionToCheck.removeWhere(
-        (e) => manhattanDistance(sensor.position, e) <= distance,
+        (e) => sensor.manhattanDistance(e) <= distance,
       );
     }
 
     for (final sensor in sensors) {
-      for (final pos in positionToCheck) {
-        if (!pos.isValid()) continue;
+      for (final pos in positionToCheck.where((e) => e.valid)) {
+        final d1 = sensor.manhattanDistance(pos);
+        final d2 = sensor.manhattanDistance(sensor.beaconPosition);
 
-        final d1 = manhattanDistance(sensor.position, pos);
-        final d2 = manhattanDistance(sensor.position, sensor.beaconPosition);
-
-        if (d1 > d2) {
-          return pos.tuningFrequency;
-        }
+        if (d1 > d2) return pos.tuningFrequency;
       }
     }
 
     return 0;
-  }
-}
-
-int manhattanDistance(Position a, Position b) {
-  return (a.x - b.x).abs() + (a.y - b.y).abs();
-}
-
-/// Return all the position that are on the border of the radius [distance] with
-/// a center at [pos].
-Iterable<Position> getExternalBorderForPosition(
-  Position pos,
-  int distance,
-) sync* {
-  final effectiveDistance = distance + 1;
-  final topPos = Position(pos.x, pos.y - effectiveDistance);
-  final bottomPos = Position(pos.x, pos.y + effectiveDistance);
-
-  int offset = 0;
-  for (int y = topPos.y; y < pos.y; y++) {
-    yield Position(pos.x - offset, y);
-    yield Position(pos.x + offset, y);
-    offset++;
-  }
-
-  yield Position(pos.x - effectiveDistance, pos.y);
-  yield Position(pos.x + effectiveDistance, pos.y);
-
-  offset = 0;
-  for (int y = pos.y; y > bottomPos.y; y--) {
-    yield Position(pos.x - offset, y);
-    yield Position(pos.x + offset, y);
-    offset++;
   }
 }
 
@@ -128,6 +86,33 @@ class Sensor {
 
   final Position position;
   final Position beaconPosition;
+
+  int manhattanDistance(Position b) {
+    return (position.x - b.x).abs() + (position.y - b.y).abs();
+  }
+
+  Iterable<Position> getExternalBorderForPosition() sync* {
+    final distance = manhattanDistance(beaconPosition) + 1;
+    final topPos = Position(position.x, position.y - distance);
+    final bottomPos = Position(position.x, position.y + distance);
+
+    int offset = 0;
+    for (int y = topPos.y; y < position.y; y++) {
+      yield Position(position.x - offset, y);
+      yield Position(position.x + offset, y);
+      offset++;
+    }
+
+    yield Position(position.x - distance, position.y);
+    yield Position(position.x + distance, position.y);
+
+    offset = 0;
+    for (int y = position.y; y > bottomPos.y; y--) {
+      yield Position(position.x - offset, y);
+      yield Position(position.x + offset, y);
+      offset++;
+    }
+  }
 }
 
 extension PositionParser on Position {
@@ -136,9 +121,6 @@ extension PositionParser on Position {
     return Position(int.parse(parts[0]), int.parse(parts[1]));
   }
 
-  bool isValid() {
-    return x >= 0 && x <= 4000000 && y >= 0 && y <= 4000000;
-  }
-
+  bool get valid => x >= 0 && x <= 4000000 && y >= 0 && y <= 4000000;
   int get tuningFrequency => x * 4000000 + y;
 }
