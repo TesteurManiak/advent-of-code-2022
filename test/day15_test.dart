@@ -1,6 +1,7 @@
 import 'package:test/test.dart';
 
 import '../solutions/index.dart';
+import '../utils/field.dart';
 import 'utils/test_utils.dart';
 
 void main() {
@@ -22,6 +23,13 @@ void main() {
 
       test('returns $expectedOutput', () {
         expect(day.solvePart2(), expectedOutput);
+      });
+
+      test('manhattanDistance for 8,7 and 2,10', () {
+        expect(
+          manhattanDistance(const Position(8, 7), const Position(2, 10)),
+          9,
+        );
       });
     });
   });

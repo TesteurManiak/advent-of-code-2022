@@ -52,37 +52,33 @@ class Day15 extends GenericDay {
   @override
   int solvePart2() {
     final sensors = parseInput();
-    final coveredPositions = <Position>{};
+    final positionToCheck = <Position>{};
 
     for (final sensor in sensors) {
-      coveredPositions.add(sensor.position);
       final distance =
           manhattanDistance(sensor.position, sensor.beaconPosition);
-      final sensorX = sensor.position.x;
-      final sensorY = sensor.position.y;
 
-      for (int y = sensorY - distance; y <= sensorY + distance; y++) {
-        for (int x = sensorX - (distance - (y - sensorY).abs());
-            x <= sensorX + (distance - (y - sensorY).abs());
-            x++) {
-          coveredPositions.add(Position(x, y));
-        }
-      }
+      positionToCheck
+          .addAll(getExternalBorderForPosition(sensor.position, distance));
     }
 
-    final minY = coveredPositions.map((e) => e.y).min;
-    final maxY = coveredPositions.map((e) => e.y).max;
-    final minX = coveredPositions.map((e) => e.x).min;
-    final maxX = coveredPositions.map((e) => e.x).max;
+    for (final sensor in sensors) {
+      final distance =
+          manhattanDistance(sensor.position, sensor.beaconPosition);
 
-    for (int y = minY; y <= maxY; y++) {
-      for (int x = minX; x <= maxX; x++) {
-        final pos = Position(x, y);
+      positionToCheck.removeWhere(
+        (e) => manhattanDistance(sensor.position, e) <= distance,
+      );
+    }
 
+    for (final sensor in sensors) {
+      for (final pos in positionToCheck) {
         if (!pos.isValid()) continue;
 
-        if (!coveredPositions.contains(pos)) {
-          print(pos);
+        final d1 = manhattanDistance(sensor.position, pos);
+        final d2 = manhattanDistance(sensor.position, sensor.beaconPosition);
+
+        if (d1 > d2) {
           return pos.tuningFrequency;
         }
       }
@@ -90,9 +86,37 @@ class Day15 extends GenericDay {
 
     return 0;
   }
+}
 
-  int manhattanDistance(Position a, Position b) {
-    return (a.x - b.x).abs() + (a.y - b.y).abs();
+int manhattanDistance(Position a, Position b) {
+  return (a.x - b.x).abs() + (a.y - b.y).abs();
+}
+
+/// Return all the position that are on the border of the radius [distance] with
+/// a center at [pos].
+Iterable<Position> getExternalBorderForPosition(
+  Position pos,
+  int distance,
+) sync* {
+  final effectiveDistance = distance + 1;
+  final topPos = Position(pos.x, pos.y - effectiveDistance);
+  final bottomPos = Position(pos.x, pos.y + effectiveDistance);
+
+  int offset = 0;
+  for (int y = topPos.y; y < pos.y; y++) {
+    yield Position(pos.x - offset, y);
+    yield Position(pos.x + offset, y);
+    offset++;
+  }
+
+  yield Position(pos.x - effectiveDistance, pos.y);
+  yield Position(pos.x + effectiveDistance, pos.y);
+
+  offset = 0;
+  for (int y = pos.y; y > bottomPos.y; y--) {
+    yield Position(pos.x - offset, y);
+    yield Position(pos.x + offset, y);
+    offset++;
   }
 }
 
