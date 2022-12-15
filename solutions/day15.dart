@@ -52,19 +52,36 @@ class Day15 extends GenericDay {
   @override
   int solvePart2() {
     final sensors = parseInput();
+    final coveredPositions = <Position>{};
 
-    for (int y = 0; y <= 4000000; y++) {
-      for (int x = 0; x <= 4000000; x++) {
+    for (final sensor in sensors) {
+      coveredPositions.add(sensor.position);
+      final distance =
+          manhattanDistance(sensor.position, sensor.beaconPosition);
+      final sensorX = sensor.position.x;
+      final sensorY = sensor.position.y;
+
+      for (int y = sensorY - distance; y <= sensorY + distance; y++) {
+        for (int x = sensorX - (distance - (y - sensorY).abs());
+            x <= sensorX + (distance - (y - sensorY).abs());
+            x++) {
+          coveredPositions.add(Position(x, y));
+        }
+      }
+    }
+
+    final minY = coveredPositions.map((e) => e.y).min;
+    final maxY = coveredPositions.map((e) => e.y).max;
+    final minX = coveredPositions.map((e) => e.x).min;
+    final maxX = coveredPositions.map((e) => e.x).max;
+
+    for (int y = minY; y <= maxY; y++) {
+      for (int x = minX; x <= maxX; x++) {
         final pos = Position(x, y);
 
         if (!pos.isValid()) continue;
 
-        final distanceToBeacon = sensors;
-        if (distanceToBeacon.every(
-          (sensor) =>
-              manhattanDistance(sensor.position, pos) !=
-              manhattanDistance(sensor.beaconPosition, pos),
-        )) {
+        if (!coveredPositions.contains(pos)) {
           print(pos);
           return pos.tuningFrequency;
         }
