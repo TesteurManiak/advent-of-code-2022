@@ -121,6 +121,67 @@ int getMaxPressure({
   required ValveMap valveMap,
   required bool withElephant,
 }) {
+  if (withElephant) {
+    return getMaxPressureWithElephant(
+      start: start,
+      time: time,
+      destinationRooms: destinationRooms,
+      priceMap: priceMap,
+      valveMap: valveMap,
+    );
+  }
+
+  return getAllPaths(
+    start: start,
+    time: time,
+    destinationRooms: destinationRooms,
+    priceMap: priceMap,
+    valveMap: valveMap,
+    withElephant: false,
+  ).first.finalPressure;
+}
+
+int getMaxPressureWithElephant({
+  required Valve start,
+  required int time,
+  required List<Valve> destinationRooms,
+  required PricesRoomMap priceMap,
+  required ValveMap valveMap,
+}) {
+  int mostPressureReleased = -1;
+  final paths = getAllPaths(
+    start: start,
+    time: time,
+    destinationRooms: destinationRooms,
+    priceMap: priceMap,
+    valveMap: valveMap,
+    withElephant: true,
+  );
+
+  for (int human = 0; human < paths.length; human++) {
+    final humanPath = paths[human];
+    for (int elephant = human + 1; elephant < paths.length; elephant++) {
+      final elephantPath = paths[elephant];
+      if (humanPath.steps.every((s) => !elephantPath.steps.contains(s))) {
+        final combinedPressure =
+            humanPath.finalPressure + elephantPath.finalPressure;
+        if (combinedPressure > mostPressureReleased) {
+          mostPressureReleased = combinedPressure;
+        }
+      }
+    }
+  }
+  return mostPressureReleased;
+}
+
+List<_Path> getAllPaths({
+  required Valve start,
+  required int time,
+  required List<Valve> destinationRooms,
+  required PricesRoomMap priceMap,
+  required ValveMap valveMap,
+  required bool withElephant,
+}) {
   final paths = <_Path>[
     _Path(
       current: start.name,
@@ -146,17 +207,32 @@ int getMaxPressure({
       final currentPrice = currentPrices[room]!;
       if (room != path.current && path.timeLeft - currentPrice > 1) {
         madeNewPath = true;
+        final newTimeAfterVisitAndValveOpen = path.timeLeft - currentPrice - 1;
         paths.add(
           _Path(
             current: room,
             toVisit: path.toVisit.where((e) => e != room).toList(),
-            timeLeft: path.timeLeft - currentPrice - 1,
+            timeLeft: newTimeAfterVisitAndValveOpen,
             finished: false,
             steps: [...path.steps, room],
             finalPressure: path.finalPressure +
-                (path.timeLeft - currentPrice - 1) * valveMap[room]!.flowRate,
+                newTimeAfterVisitAndValveOpen * valveMap[room]!.flowRate,
           ),
         );
+
+        if (withElephant) {
+          paths.add(
+            _Path(
+              current: room,
+              toVisit: [],
+              timeLeft: newTimeAfterVisitAndValveOpen,
+              finished: true,
+              steps: [...path.steps, room],
+              finalPressure: path.finalPressure +
+                  newTimeAfterVisitAndValveOpen * valveMap[room]!.flowRate,
+            ),
+          );
+        }
       }
     }
 
@@ -166,7 +242,7 @@ int getMaxPressure({
   final finishedPaths = paths.where((p) => p.finished).toList()
     ..sort(sortByPressure);
 
-  return finishedPaths.first.finalPressure;
+  return finishedPaths;
 }
 
 int sortByPressure(_Path a, _Path b) {
