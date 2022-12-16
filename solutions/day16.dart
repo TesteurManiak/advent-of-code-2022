@@ -53,9 +53,10 @@ class Day16 extends GenericDay {
         neighborsOf: (p0) => p0.neighbors(valves),
       ).skip(1);
 
-      if (paths.isEmpty) continue;
+      final nextValve = paths.firstOrNull;
 
-      final nextValve = paths.first;
+      if (nextValve == null || nextValve == currentValve) continue;
+
       print('You move to valve ${nextValve.name}');
       currentValve = nextValve;
     }
