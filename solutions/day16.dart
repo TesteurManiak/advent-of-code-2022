@@ -23,32 +23,57 @@ class Day16 extends GenericDay {
   @override
   int solvePart1() {
     final valveMap = parseInput();
-    final startingRoom = valveMap['AA']!;
+    final start = valveMap['AA']!;
     final destinationRooms =
         valveMap.values.where((e) => e.flowRate > 0).toList();
-    final startingRooms = [startingRoom, ...destinationRooms];
-    final PricesRoomMap roomsMovePrices = {};
+    final startingRooms = [start, ...destinationRooms];
+    final PricesRoomMap priceMap = {};
+
     for (final room in startingRooms) {
       final prices = costCalculation(
         start: room,
         goals: destinationRooms.where((e) => e.name != room.name),
         valveMap: valveMap,
       );
-      roomsMovePrices[room.name] = prices;
+      priceMap[room.name] = prices;
     }
 
     return getMaxPressure(
       time: 30,
       destinationRooms: destinationRooms,
-      priceMap: roomsMovePrices,
+      priceMap: priceMap,
       valveMap: valveMap,
-      start: startingRoom,
+      start: start,
+      withElephant: false,
     );
   }
 
   @override
   int solvePart2() {
-    return 0;
+    final valveMap = parseInput();
+    final start = valveMap['AA']!;
+    final destinationRooms =
+        valveMap.values.where((e) => e.flowRate > 0).toList();
+    final startingRooms = [start, ...destinationRooms];
+    final PricesRoomMap priceMap = {};
+
+    for (final room in startingRooms) {
+      final prices = costCalculation(
+        start: room,
+        goals: destinationRooms.where((e) => e.name != room.name),
+        valveMap: valveMap,
+      );
+      priceMap[room.name] = prices;
+    }
+
+    return getMaxPressure(
+      start: start,
+      time: 26,
+      destinationRooms: destinationRooms,
+      priceMap: priceMap,
+      valveMap: valveMap,
+      withElephant: true,
+    );
   }
 }
 
@@ -94,6 +119,7 @@ int getMaxPressure({
   required List<Valve> destinationRooms,
   required PricesRoomMap priceMap,
   required ValveMap valveMap,
+  required bool withElephant,
 }) {
   final paths = <_Path>[
     _Path(
@@ -137,12 +163,14 @@ int getMaxPressure({
     if (!madeNewPath) path.finished = true;
   }
 
-  final finishedPaths = paths.where((p) => p.finished).toList();
-  finishedPaths.sort((a, b) {
-    return b.finalPressure - a.finalPressure;
-  });
+  final finishedPaths = paths.where((p) => p.finished).toList()
+    ..sort(sortByPressure);
 
   return finishedPaths.first.finalPressure;
+}
+
+int sortByPressure(_Path a, _Path b) {
+  return b.finalPressure - a.finalPressure;
 }
 
 class Valve {
