@@ -5,12 +5,13 @@ import 'package:collection/collection.dart';
 typedef CostTo<L> = double Function(L, L);
 typedef NeighborsOf<L> = Iterable<L> Function(L);
 
-Iterable<L>? dijkstraPath<L>({
+List<L> dijkstraPath<L>({
   required L start,
   required L goal,
-  required CostTo<L> costTo,
   required NeighborsOf<L> neighborsOf,
+  CostTo<L>? costTo,
 }) {
+  final localCostTo = costTo ?? (a, b) => 1.0;
   final dist = <L, double>{start: 0};
   final prev = <L, L>{};
 
@@ -31,7 +32,7 @@ Iterable<L>? dijkstraPath<L>({
       return path;
     }
     for (final neighbor in neighborsOf(current)) {
-      final score = dist[current]! + costTo(current, neighbor);
+      final score = dist[current]! + localCostTo(current, neighbor);
       if (score < (dist[neighbor] ?? double.infinity)) {
         dist[neighbor] = score;
         prev[neighbor] = current;
@@ -39,15 +40,16 @@ Iterable<L>? dijkstraPath<L>({
       }
     }
   }
-  return null;
+  return [];
 }
 
 double? dijkstraLowestCost<L>({
   required L start,
   required L goal,
-  required CostTo<L> costTo,
   required NeighborsOf<L> neighborsOf,
+  CostTo<L>? costTo,
 }) {
+  final localCostTo = costTo ?? (a, b) => 1.0;
   final dist = <L, double>{start: 0};
   final prev = <L, L>{};
 
@@ -64,7 +66,7 @@ double? dijkstraLowestCost<L>({
 
     final neighbors = neighborsOf(current);
     for (final neighbor in neighbors) {
-      final score = dist[current]! + costTo(current, neighbor);
+      final score = dist[current]! + localCostTo(current, neighbor);
       if (score < (dist[neighbor] ?? double.infinity)) {
         dist[neighbor] = score;
         prev[neighbor] = current;

@@ -1,4 +1,5 @@
 import '../utils/index.dart';
+import '../utils/pathfinding.dart';
 
 class Day16 extends GenericDay {
   Day16() : super(16);
@@ -24,26 +25,74 @@ class Day16 extends GenericDay {
   int solvePart1() {
     final valves = parseInput();
 
-    int pressureReleased = 0;
+    // Pump that are worth opening
+    final workingPumps = valves.values.where((e) => e.flowRate > 0).toList();
+
     int minuteRemaining = 30;
     Valve currentValve = valves.values.first;
+    int totalFlow = 0;
     while (minuteRemaining > 0) {
-      if (currentValve.shouldOpen(minuteRemaining - 1)) {
+      minuteRemaining--;
+      print('== Minute ${30 - minuteRemaining} ==');
+      totalFlow += calculateFlow(valves);
+
+      if (currentValve.potentialFlowRate > 0) {
+        print('You open valve ${currentValve.name}');
         currentValve.open = true;
-        minuteRemaining -= 1;
-        pressureReleased += currentValve.potentialFlow(minuteRemaining);
+        continue;
       }
-      currentValve = currentValve.leadsTo(valves).bestDirection();
-      minuteRemaining -= 1;
+
+      /// Find the next valve to open.
+      final paths = dijkstraPath<Valve>(
+        start: currentValve,
+        goal: workingPumps.reduce((value, element) {
+          return value.potentialFlowRate > element.potentialFlowRate
+              ? value
+              : element;
+        }),
+        neighborsOf: (p0) => p0.neighbors(valves),
+      ).skip(1);
+
+      if (paths.isEmpty) continue;
+
+      final nextValve = paths.first;
+      print('You move to valve ${nextValve.name}');
+      currentValve = nextValve;
     }
 
-    return pressureReleased;
+    return totalFlow;
   }
 
   @override
   int solvePart2() {
     return 0;
   }
+}
+
+int calculateFlow(Map<String, Valve> valves) {
+  final openedValves = valves.values.where((e) => e.open);
+  final sb = StringBuffer();
+  if (openedValves.isEmpty) {
+    sb.write('No valves are opened.');
+  } else {
+    sb.write('Valve');
+
+    if (openedValves.length > 1) sb.write('s');
+    sb.write(' ');
+    for (int i = 0; i < openedValves.length; i++) {
+      final valve = openedValves.elementAt(i);
+      sb.write(valve.name);
+      if (i < openedValves.length - 1) {
+        sb.write(', ');
+      }
+    }
+  }
+  final releasedPressure = openedValves.map((e) => e.flowRate).sum;
+  if (releasedPressure > 0) {
+    sb.write(' released $releasedPressure pressure.');
+  }
+  print(sb.toString());
+  return releasedPressure;
 }
 
 class Valve {
@@ -59,36 +108,17 @@ class Valve {
 
   bool open = false;
 
-  bool shouldOpen(int remainingMinutes) {
-    return !open && potentialFlow(remainingMinutes) >= 1;
-  }
+  /// Flow rate gained by opening this valve.
+  ///
+  /// If the valve is already open, it will return 0.
+  int get potentialFlowRate => open ? 0 : flowRate;
 
-  int potentialFlow(int remainingMinutes) {
-    return flowRate * remainingMinutes;
-  }
-
-  Iterable<Valve> leadsTo(Map<String, Valve> valves) {
+  Iterable<Valve> neighbors(Map<String, Valve> valves) {
     return _leadsTo.map((e) => valves[e]!);
   }
 
   @override
   String toString() {
-    return 'Valve $name has flow rate=$flowRate; tunnels lead to valves ${_leadsTo.join(', ')}';
-  }
-}
-
-extension on Iterable<Valve> {
-  Valve bestDirection() {
-    return reduce(
-      (value, element) {
-        if (value.open && !element.open) {
-          return element;
-        } else if (!value.open && element.open) {
-          return value;
-        } else {
-          return value.flowRate > element.flowRate ? value : element;
-        }
-      },
-    );
+    return 'Valve $name';
   }
 }
