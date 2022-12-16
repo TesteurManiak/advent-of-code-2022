@@ -4,8 +4,8 @@ class Day16 extends GenericDay {
   Day16() : super(16);
 
   @override
-  List<Valve> parseInput() {
-    return input.getPerLine().map<Valve>((e) {
+  Map<String, Valve> parseInput() {
+    final valves = input.getPerLine().map<Valve>((e) {
       final match = RegExp(
         r'Valve (\w+) has flow rate=(\d+); tunnels? (?:lead|leads) to (?:valve|valves) (.*)',
       ).firstMatch(e)!;
@@ -16,6 +16,8 @@ class Day16 extends GenericDay {
         leadsTo: match.group(3)!.split(', '),
       );
     }).toList();
+
+    return Map.fromEntries(valves.map((e) => MapEntry(e.name, e)));
   }
 
   @override
@@ -24,16 +26,14 @@ class Day16 extends GenericDay {
 
     int pressureReleased = 0;
     int minuteRemaining = 30;
-    Valve currentValve = valves.first;
+    Valve currentValve = valves.values.first;
     while (minuteRemaining > 0) {
-      if (currentValve.open) {
-        pressureReleased += currentValve.flowRate;
-      }
       if (currentValve.shouldOpen(minuteRemaining - 1)) {
         currentValve.open = true;
         minuteRemaining -= 1;
+        pressureReleased += currentValve.potentialFlow(minuteRemaining);
       }
-      currentValve = currentValve.leadsTo(valves).first;
+      currentValve = currentValve.leadsTo(valves).bestDirection();
       minuteRemaining -= 1;
     }
 
@@ -59,10 +59,6 @@ class Valve {
 
   bool open = false;
 
-  List<Valve> leadsTo(List<Valve> valves) {
-    return valves.where((e) => _leadsTo.contains(e.name)).toList();
-  }
-
   bool shouldOpen(int remainingMinutes) {
     return !open && potentialFlow(remainingMinutes) >= 1;
   }
@@ -71,8 +67,28 @@ class Valve {
     return flowRate * remainingMinutes;
   }
 
+  Iterable<Valve> leadsTo(Map<String, Valve> valves) {
+    return _leadsTo.map((e) => valves[e]!);
+  }
+
   @override
   String toString() {
     return 'Valve $name has flow rate=$flowRate; tunnels lead to valves ${_leadsTo.join(', ')}';
+  }
+}
+
+extension on Iterable<Valve> {
+  Valve bestDirection() {
+    return reduce(
+      (value, element) {
+        if (value.open && !element.open) {
+          return element;
+        } else if (!value.open && element.open) {
+          return value;
+        } else {
+          return value.flowRate > element.flowRate ? value : element;
+        }
+      },
+    );
   }
 }
