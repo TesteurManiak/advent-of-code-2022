@@ -1,4 +1,5 @@
 import '../utils/index.dart';
+import '../utils/pathfinding.dart';
 
 class Day16 extends GenericDay {
   Day16() : super(16);
@@ -30,10 +31,9 @@ class Day16 extends GenericDay {
     final PricesRoomMap priceMap = {};
 
     for (final room in startingRooms) {
-      final prices = costCalculation(
+      final prices = valveMap.costCalculation(
         start: room,
         goals: destinationRooms.where((e) => e.name != room.name),
-        valveMap: valveMap,
       );
       priceMap[room.name] = prices;
     }
@@ -58,10 +58,9 @@ class Day16 extends GenericDay {
     final PricesRoomMap priceMap = {};
 
     for (final room in startingRooms) {
-      final prices = costCalculation(
+      final prices = valveMap.costCalculation(
         start: room,
         goals: destinationRooms.where((e) => e.name != room.name),
-        valveMap: valveMap,
       );
       priceMap[room.name] = prices;
     }
@@ -75,42 +74,6 @@ class Day16 extends GenericDay {
       withElephant: true,
     );
   }
-}
-
-CostMap costCalculation({
-  required Valve start,
-  required Iterable<Valve> goals,
-  required ValveMap valveMap,
-}) {
-  final visited = <Valve>{};
-  final toVisit = <Valve>[start];
-  final lowestCost = <Valve, int>{start: 0};
-
-  while (toVisit.isNotEmpty) {
-    final current = toVisit.removeAt(0);
-
-    if (visited.contains(current)) continue;
-
-    final worthItAdj = current.neighbors(valveMap).where((e) {
-      return !visited.contains(e);
-    });
-
-    toVisit.addAll(worthItAdj);
-
-    final costToCurrent = lowestCost[current]!;
-
-    for (final neighbor in worthItAdj) {
-      final newCostToNeighbor = costToCurrent + 1;
-      final costToNeighbor = lowestCost[neighbor] ?? newCostToNeighbor;
-
-      if (newCostToNeighbor <= costToNeighbor) {
-        lowestCost[neighbor] = newCostToNeighbor;
-      }
-    }
-
-    visited.add(current);
-  }
-  return Map.fromEntries(goals.map((e) => MapEntry(e.name, lowestCost[e]!)));
 }
 
 int getMaxPressure({
@@ -292,3 +255,19 @@ class _Path {
 typedef ValveMap = Map<String, Valve>;
 typedef CostMap = Map<String, int>;
 typedef PricesRoomMap = Map<String, CostMap>;
+
+extension on ValveMap {
+  CostMap costCalculation({
+    required Valve start,
+    required Iterable<Valve> goals,
+  }) {
+    final lowestCost = dijkstraMap<Valve>(
+      start: start,
+      goals: goals,
+      neighborsOf: (e) => e.neighbors(this),
+    );
+    return Map.fromEntries(
+      goals.map((e) => MapEntry(e.name, lowestCost[e]!.toInt())),
+    );
+  }
+}

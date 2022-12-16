@@ -76,3 +76,45 @@ double? dijkstraLowestCost<L>({
   }
   return null;
 }
+
+Map<L, double> dijkstraMap<L>({
+  required L start,
+  required Iterable<L> goals,
+  required NeighborsOf<L> neighborsOf,
+  CostTo<L>? costTo,
+}) {
+  final localCostTo = costTo ?? (a, b) => 1.0;
+  final visited = <L>{};
+  final dist = <L, double>{start: 0};
+
+  int compareByDist(L a, L b) =>
+      (dist[a] ?? double.infinity).compareTo(dist[b] ?? double.infinity);
+
+  final queue = PriorityQueue<L>(compareByDist)..add(start);
+
+  while (queue.isNotEmpty) {
+    final current = queue.removeFirst();
+
+    if (visited.contains(current)) continue;
+
+    final worthItAdj = neighborsOf(current).where((e) {
+      return !visited.contains(e);
+    });
+
+    queue.addAll(worthItAdj);
+
+    final costToCurrent = dist[current]!;
+
+    for (final neighbor in worthItAdj) {
+      final newCostToNeighbor = costToCurrent + localCostTo(current, neighbor);
+      final costToNeighbor = dist[neighbor] ?? newCostToNeighbor;
+
+      if (newCostToNeighbor <= costToNeighbor) {
+        dist[neighbor] = newCostToNeighbor;
+      }
+    }
+    visited.add(current);
+  }
+
+  return dist;
+}
